@@ -1,8 +1,10 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { Product, CartItem, Order, Category } from '../models/product.model';
+import { InventoryService } from './inventory.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PosService {
   private cart = signal<CartItem[]>([]);
@@ -16,45 +18,53 @@ export class PosService {
   readonly allCategories = this.categories.asReadonly();
   readonly allOrders = this.orders.asReadonly();
 
+  private inventoryService = inject(InventoryService);
+  private notificationService = inject(NotificationService);
+
   constructor() {
     this.initializeData();
   }
 
   private initializeData() {
-    // Sample categories
-    const sampleCategories: Category[] = [
-      { id: '1', name: 'Beverages', color: 'bg-blue-500' },
-      { id: '2', name: 'Food', color: 'bg-green-500' },
-      { id: '3', name: 'Snacks', color: 'bg-yellow-500' },
-      { id: '4', name: 'Electronics', color: 'bg-purple-500' }
-    ];
-
-    // Sample products
-    const sampleProducts: Product[] = [
-      { id: '1', name: 'Coffee', price: 4.99, category: 'Beverages', stock: 50, barcode: '123456789' },
-      { id: '2', name: 'Sandwich', price: 8.99, category: 'Food', stock: 25, barcode: '987654321' },
-      { id: '3', name: 'Chips', price: 2.99, category: 'Snacks', stock: 100, barcode: '456789123' },
-      { id: '4', name: 'Soda', price: 1.99, category: 'Beverages', stock: 75, barcode: '789123456' },
-      { id: '5', name: 'Burger', price: 12.99, category: 'Food', stock: 20, barcode: '321654987' },
-      { id: '6', name: 'Headphones', price: 29.99, category: 'Electronics', stock: 15, barcode: '654987321' }
-    ];
-
-    this.categories.set(sampleCategories);
-    this.products.set(sampleProducts);
+    // This service now primarily handles cart and order operations
+    // Product data comes from InventoryService
   }
 
   addToCart(product: Product, quantity: number = 1) {
+    // Get current product from inventory to ensure we have latest stock
+    const currentProduct = this.inventoryService
+      .allProducts()
+      .find((p) => p.id === product.id);
+    if (!currentProduct) {
+      throw new Error('Product not found');
+    }
+
+    // Validate stock availability
+    const existingItem = this.cart().find(
+      (item) => item.product.id === product.id
+    );
+    const currentQuantityInCart = existingItem ? existingItem.quantity : 0;
+    const totalRequiredQuantity = currentQuantityInCart + quantity;
+
+    if (currentProduct.stock < totalRequiredQuantity) {
+      throw new Error(
+        `Insufficient stock. Available: ${currentProduct.stock}, Required: ${totalRequiredQuantity}`
+      );
+    }
+
     const currentCart = this.cart();
-    const existingItem = currentCart.find(item => item.product.id === product.id);
 
     if (existingItem) {
       existingItem.quantity += quantity;
-      existingItem.subtotal = existingItem.quantity * existingItem.product.price;
+      existingItem.subtotal =
+        existingItem.quantity * existingItem.product.sellingPrice;
+      // Update product reference to latest
+      existingItem.product = currentProduct;
     } else {
       const newItem: CartItem = {
-        product,
+        product: currentProduct,
         quantity,
-        subtotal: quantity * product.price
+        subtotal: quantity * currentProduct.sellingPrice,
       };
       currentCart.push(newItem);
     }
@@ -64,20 +74,38 @@ export class PosService {
 
   removeFromCart(productId: string) {
     const currentCart = this.cart();
-    const updatedCart = currentCart.filter(item => item.product.id !== productId);
+    const updatedCart = currentCart.filter(
+      (item) => item.product.id !== productId
+    );
     this.cart.set(updatedCart);
   }
 
   updateQuantity(productId: string, quantity: number) {
     const currentCart = this.cart();
-    const item = currentCart.find(item => item.product.id === productId);
-    
+    const item = currentCart.find((item) => item.product.id === productId);
+
     if (item) {
       if (quantity <= 0) {
         this.removeFromCart(productId);
       } else {
+        // Get current product from inventory to validate stock
+        const currentProduct = this.inventoryService
+          .allProducts()
+          .find((p) => p.id === productId);
+        if (!currentProduct) {
+          throw new Error('Product not found');
+        }
+
+        if (currentProduct.stock < quantity) {
+          throw new Error(
+            `Insufficient stock. Available: ${currentProduct.stock}, Required: ${quantity}`
+          );
+        }
+
         item.quantity = quantity;
-        item.subtotal = quantity * item.product.price;
+        item.subtotal = quantity * item.product.sellingPrice;
+        // Update product reference to latest
+        item.product = currentProduct;
         this.cart.set([...currentCart]);
       }
     }
@@ -95,10 +123,13 @@ export class PosService {
     this.cart.set([]);
   }
 
-  processOrder(paymentMethod: 'cash' | 'card' | 'digital', customerName?: string): Order {
+  processOrder(
+    paymentMethod: 'cash' | 'card' | 'digital',
+    customerName?: string
+  ): Order {
     const cartItems = this.cart();
     const subtotal = this.getCartTotal();
-    const tax = subtotal * 0.08; // 8% tax
+    const tax = subtotal * 0; // 8% tax
     const discount = 0; // Can be implemented later
     const finalTotal = subtotal + tax - discount;
 
@@ -111,8 +142,49 @@ export class PosService {
       finalTotal,
       paymentMethod,
       timestamp: new Date(),
-      customerName
+      customerName,
+      type: 'sale',
     };
+
+    // Update stock levels for each item sold
+    cartItems.forEach((item) => {
+      const currentStock = item.product.stock;
+
+      this.inventoryService.updateProductStock(
+        item.product.id,
+        item.quantity,
+        'out'
+      );
+      this.inventoryService.addStockMovement(
+        item.product.id,
+        item.product.name,
+        'out',
+        item.quantity,
+        `Sale - Order #${order.id}`,
+        order.id
+      );
+
+      const newStock = currentStock - item.quantity;
+
+      // Show stock update notification
+      this.notificationService.showStockUpdated(
+        item.product.name,
+        newStock,
+        'Sale'
+      );
+
+      // Check for low stock after sale
+      const updatedProduct = this.inventoryService
+        .allProducts()
+        .find((p) => p.id === item.product.id);
+      if (updatedProduct && updatedProduct.stock <= updatedProduct.minStock) {
+        this.notificationService.showStockAlert(
+          item.product.name,
+          updatedProduct.stock,
+          updatedProduct.minStock
+        );
+      }
+    });
 
     // Add to orders history
     const currentOrders = this.orders();
@@ -128,14 +200,17 @@ export class PosService {
     const allProducts = this.products();
     if (!query.trim()) return allProducts;
 
-    return allProducts.filter(product =>
-      product.name.toLowerCase().includes(query.toLowerCase()) ||
-      product.barcode?.includes(query) ||
-      product.category.toLowerCase().includes(query.toLowerCase())
+    return allProducts.filter(
+      (product) =>
+        product.name.toLowerCase().includes(query.toLowerCase()) ||
+        product.barcode?.includes(query) ||
+        product.category.toLowerCase().includes(query.toLowerCase())
     );
   }
 
   getProductsByCategory(categoryName: string): Product[] {
-    return this.products().filter(product => product.category === categoryName);
+    return this.products().filter(
+      (product) => product.category === categoryName
+    );
   }
 }
