@@ -11,10 +11,7 @@
         (click)="closeReceipt()"
         class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
       >
-        <lucide-icon
-          [img]="closeIcon"
-          class="w-6 h-6 text-gray-500"
-        ></lucide-icon>
+        <lucide-icon [img]="closeIcon" class="w-6 h-6 text-gray-500" />
       </button>
     </div>
 
@@ -31,9 +28,11 @@
         <div class="text-sm text-gray-600 mb-2">
           {{ order.timestamp | date : "medium" }}
         </div>
-        <div *ngIf="order.customerName" class="text-sm text-gray-600 mb-2">
+        @if(order.customerName){
+        <div class="text-sm text-gray-600 mb-2">
           Customer: {{ order.customerName }}
         </div>
+        }
         <div class="text-sm text-gray-600">
           Payment: {{ getPaymentMethodName(order.paymentMethod) }}
         </div>
@@ -41,22 +40,20 @@
 
       <!-- Items -->
       <div class="space-y-3 mb-4">
-        <div
-          *ngFor="let item of order.items"
-          class="flex justify-between items-start"
-        >
+        @for( item of order.items; track $index){
+        <div class="flex justify-between items-start">
           <div class="flex-1">
             <div class="font-medium text-gray-800">{{ item.product.name }}</div>
             <div class="text-sm text-gray-500">
-              {{ item.quantity }} × PKR {{
-                item.product.sellingPrice | number : "1.2-2"
-              }}
+              {{ item.quantity }} × PKR
+              {{ item.product.sellingPrice | number : "1.2-2" }}
             </div>
           </div>
           <div class="font-semibold text-gray-800">
             PKR {{ item.subtotal | number : "1.2-2" }}
           </div>
         </div>
+        }
       </div>
 
       <!-- Totals -->
@@ -69,12 +66,14 @@
           <span class="text-gray-600">Tax:</span>
           <span>PKR {{ order.tax | number : "1.2-2" }}</span>
         </div>
-        <div *ngIf="order.discount > 0" class="flex justify-between text-sm">
+        @if(order.discount > 0){
+        <div class="flex justify-between text-sm">
           <span class="text-gray-600">Discount:</span>
           <span class="text-green-600"
             >-PKR {{ order.discount | number : "1.2-2" }}</span
           >
         </div>
+        }
         <div class="flex justify-between text-lg font-bold border-t pt-2">
           <span>Total:</span>
           <span class="text-green-600"
@@ -97,7 +96,7 @@
           (click)="printReceipt()"
           class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
         >
-          <lucide-icon [img]="printerIcon" class="w-5 h-5"></lucide-icon>
+          <lucide-icon [img]="printerIcon" class="w-5 h-5" />
           Print
         </button>
 
@@ -105,7 +104,7 @@
           (click)="downloadReceipt()"
           class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
         >
-          <lucide-icon [img]="downloadIcon" class="w-5 h-5"></lucide-icon>
+          <lucide-icon [img]="downloadIcon" class="w-5 h-5" />
           Download
         </button>
       </div>
