@@ -2,44 +2,44 @@
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
 >
   <div
-    class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-100"
+    class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-100 transition-colors duration-200"
   >
     <!-- Header -->
-    <div class="flex items-center justify-between p-6 border-b border-gray-200">
-      <h2 class="text-2xl font-bold text-gray-800">Payment</h2>
+    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Payment</h2>
       <button
         (click)="closePayment()"
-        class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
       >
         <lucide-icon
           [img]="closeIcon"
-          class="w-6 h-6 text-gray-500"
+          class="w-6 h-6 text-gray-500 dark:text-gray-400"
         ></lucide-icon>
       </button>
     </div>
 
     <!-- Order Summary -->
-    <div class="p-6 border-b border-gray-200 bg-gray-50">
-      <h3 class="font-semibold text-gray-800 mb-3">Order Summary</h3>
+    <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+      <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Order Summary</h3>
       <div class="space-y-2 text-sm">
         <div class="flex justify-between">
-          <span class="text-gray-600">Items ({{ itemCount() }}):</span>
-          <span>PKR {{ subtotal() | number : "1.2-2" }}</span>
+          <span class="text-gray-600 dark:text-gray-400">Items ({{ itemCount() }}):</span>
+          <span class="text-gray-900 dark:text-white">PKR {{ subtotal() | number : "1.2-2" }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-gray-600">Tax:</span>
-          <span>PKR {{ tax() | number : "1.2-2" }}</span>
+          <span class="text-gray-600 dark:text-gray-400">Tax:</span>
+          <span class="text-gray-900 dark:text-white">PKR {{ tax() | number : "1.2-2" }}</span>
         </div>
-        <div class="flex justify-between font-bold text-lg border-t pt-2">
-          <span>Total:</span>
-          <span class="text-green-600">PKR {{ total() | number : "1.2-2" }}</span>
+        <div class="flex justify-between font-bold text-lg border-t border-gray-200 dark:border-gray-600 pt-2">
+          <span class="text-gray-800 dark:text-white">Total:</span>
+          <span class="text-green-600 dark:text-green-400">PKR {{ total() | number : "1.2-2" }}</span>
         </div>
       </div>
     </div>
 
     <!-- Payment Methods -->
     <div class="p-6">
-      <h3 class="font-semibold text-gray-800 mb-4">Payment Method</h3>
+      <h3 class="font-semibold text-gray-800 dark:text-white mb-4">Payment Method</h3>
 
       <div class="space-y-3 mb-6">
         <button
@@ -48,17 +48,17 @@
           [class]="
             'w-full p-4 border-2 rounded-xl transition-all duration-200 flex items-center gap-3 ' +
             (selectedPaymentMethod() === method.id
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50')
+              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+              : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700/50')
           "
         >
           <lucide-icon
             [img]="method.icon"
-            class="w-6 h-6 text-gray-600"
+            class="w-6 h-6 text-gray-600 dark:text-gray-400"
           ></lucide-icon>
           <div class="flex-1 text-left">
-            <div class="font-semibold text-gray-800">{{ method.name }}</div>
-            <div class="text-sm text-gray-500">{{ method.description }}</div>
+            <div class="font-semibold text-gray-800 dark:text-white">{{ method.name }}</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">{{ method.description }}</div>
           </div>
           <div
             *ngIf="selectedPaymentMethod() === method.id"
@@ -74,14 +74,14 @@
 
       <!-- Customer Name (Optional) -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Customer Name (Optional)
         </label>
         <input
           type="text"
           [(ngModel)]="customerName"
           placeholder="Enter customer name..."
-          class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          class="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
         />
       </div>
 
@@ -90,7 +90,7 @@
         <button
           (click)="processPayment()"
           [disabled]="!selectedPaymentMethod() || isProcessing()"
-          class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2"
+          class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2"
         >
           <span *ngIf="!isProcessing()">Complete Payment</span>
           <span *ngIf="isProcessing()" class="flex items-center gap-2">
@@ -103,7 +103,7 @@
 
         <button
           (click)="closePayment()"
-          class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 px-6 rounded-xl font-medium transition-colors duration-200"
+          class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 py-3 px-6 rounded-xl font-medium transition-all duration-200"
         >
           Cancel
         </button>

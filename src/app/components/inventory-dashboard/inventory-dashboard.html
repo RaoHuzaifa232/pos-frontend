@@ -1,8 +1,8 @@
 <div class="p-6 space-y-6">
   <!-- Header -->
   <div>
-    <h1 class="text-2xl font-bold text-gray-900">Inventory Dashboard</h1>
-    <p class="text-gray-600">Overview of your inventory and stock levels</p>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Inventory Dashboard</h1>
+    <p class="text-gray-600 dark:text-gray-400">Overview of your inventory and stock levels</p>
   </div>
 
   <!-- Stats Cards -->
@@ -10,140 +10,140 @@
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"
   >
     <!-- Total Products -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 transition-colors duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-medium text-gray-600">Total Products</p>
-          <p class="text-2xl font-bold text-gray-900">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Products</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ inventoryReport().totalProducts }}
           </p>
         </div>
         <div
-          class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center"
         >
           <lucide-icon
             [img]="packageIcon"
-            class="w-5 h-5 text-blue-600"
+            class="w-5 h-5 text-blue-600 dark:text-blue-400"
           ></lucide-icon>
         </div>
       </div>
     </div>
 
     <!-- Inventory Value -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 transition-colors duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-medium text-gray-600">Inventory Value</p>
-          <p class="text-2xl font-bold text-gray-900">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Inventory Value</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
             PKR {{ inventoryReport().totalStockValue  }}
           </p>
         </div>
         <div
-          class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center"
         >
           <lucide-icon
             [img]="dollarIcon"
-            class="w-5 h-5 text-green-600"
+            class="w-5 h-5 text-green-600 dark:text-green-400"
           ></lucide-icon>
         </div>
       </div>
     </div>
 
     <!-- Low Stock Items -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 transition-colors duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-medium text-gray-600">Low Stock</p>
-          <p class="text-2xl font-bold text-orange-600">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Low Stock</p>
+          <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">
             {{ inventoryReport().lowStockItems }}
           </p>
         </div>
         <div
-          class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center"
         >
           <lucide-icon
             [img]="alertIcon"
-            class="w-5 h-5 text-orange-600"
+            class="w-5 h-5 text-orange-600 dark:text-orange-400"
           ></lucide-icon>
         </div>
       </div>
     </div>
 
     <!-- Out of Stock -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 transition-colors duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-medium text-gray-600">Out of Stock</p>
-          <p class="text-2xl font-bold text-red-600">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Out of Stock</p>
+          <p class="text-2xl font-bold text-red-600 dark:text-red-400">
             {{ inventoryReport().outOfStockItems }}
           </p>
         </div>
         <div
-          class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center"
         >
           <lucide-icon
             [img]="trendingDownIcon"
-            class="w-5 h-5 text-red-600"
+            class="w-5 h-5 text-red-600 dark:text-red-400"
           ></lucide-icon>
         </div>
       </div>
     </div>
 
     <!-- Total Purchases -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 transition-colors duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-medium text-gray-600">Total Purchases</p>
-          <p class="text-2xl font-bold text-gray-900">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Purchases</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
             PKR {{ inventoryReport().totalPurchases  }}
           </p>
         </div>
         <div
-          class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center"
         >
           <lucide-icon
             [img]="shoppingCartIcon"
-            class="w-5 h-5 text-purple-600"
+            class="w-5 h-5 text-purple-600 dark:text-purple-400"
           ></lucide-icon>
         </div>
       </div>
     </div>
 
     <!-- Sales Returns -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 transition-colors duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-medium text-gray-600">Sales Returns</p>
-          <p class="text-2xl font-bold text-orange-600">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Sales Returns</p>
+          <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">
             PKR {{ inventoryReport().totalSalesReturns  }}
           </p>
         </div>
         <div
-          class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center"
         >
           <lucide-icon
             [img]="trendingDownIcon"
-            class="w-5 h-5 text-orange-600"
+            class="w-5 h-5 text-orange-600 dark:text-orange-400"
           ></lucide-icon>
         </div>
       </div>
     </div>
 
     <!-- Purchase Returns -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 transition-colors duration-200">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-medium text-gray-600">Purchase Returns</p>
-          <p class="text-2xl font-bold text-purple-600">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Purchase Returns</p>
+          <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">
             PKR {{ inventoryReport().totalPurchaseReturns  }}
           </p>
         </div>
         <div
-          class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center"
         >
           <lucide-icon
             [img]="trendingUpIcon"
-            class="w-5 h-5 text-purple-600"
+            class="w-5 h-5 text-purple-600 dark:text-purple-400"
           ></lucide-icon>
         </div>
       </div>
@@ -153,13 +153,13 @@
   <!-- Quick Actions -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Low Stock Alert -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-200">
       <div class="flex items-center gap-3 mb-4">
         <lucide-icon
           [img]="alertIcon"
-          class="w-6 h-6 text-orange-600"
+          class="w-6 h-6 text-orange-600 dark:text-orange-400"
         ></lucide-icon>
-        <h3 class="text-lg font-semibold text-gray-900">Low Stock Alert</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Low Stock Alert</h3>
       </div>
 
       <div
@@ -167,7 +167,7 @@
         class="text-center py-8"
       >
         <div class="text-4xl mb-2">✅</div>
-        <p class="text-gray-600">All products are well stocked!</p>
+        <p class="text-gray-600 dark:text-gray-400">All products are well stocked!</p>
       </div>
 
       <div
@@ -178,17 +178,17 @@
           *ngFor="
             let product of inventoryService.lowStockProducts().slice(0, 5)
           "
-          class="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200"
+          class="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800"
         >
           <div>
-            <p class="font-medium text-gray-900">{{ product.name }}</p>
-            <p class="text-sm text-gray-600">{{ product.category }}</p>
+            <p class="font-medium text-gray-900 dark:text-white">{{ product.name }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">{{ product.category }}</p>
           </div>
           <div class="text-right">
-            <p class="text-sm font-medium text-orange-600">
+            <p class="text-sm font-medium text-orange-600 dark:text-orange-400">
               {{ product.stock }} left
             </p>
-            <p class="text-xs text-gray-500">Min: {{ product.minStock }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500">Min: {{ product.minStock }}</p>
           </div>
         </div>
 
@@ -196,7 +196,7 @@
           *ngIf="inventoryService.lowStockProducts().length > 5"
           class="text-center"
         >
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-gray-500 dark:text-gray-400">
             +{{ inventoryService.lowStockProducts().length - 5 }} more items
             need restocking
           </p>
@@ -205,13 +205,13 @@
     </div>
 
     <!-- Recent Stock Movements -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-200">
       <div class="flex items-center gap-3 mb-4">
         <lucide-icon
           [img]="packageIcon"
-          class="w-6 h-6 text-blue-600"
+          class="w-6 h-6 text-blue-600 dark:text-blue-400"
         ></lucide-icon>
-        <h3 class="text-lg font-semibold text-gray-900">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
           Recent Stock Movements
         </h3>
       </div>
@@ -221,7 +221,7 @@
         class="text-center py-8"
       >
         <div class="text-4xl mb-2">📦</div>
-        <p class="text-gray-600">No stock movements yet</p>
+        <p class="text-gray-600 dark:text-gray-400">No stock movements yet</p>
       </div>
 
       <div
@@ -232,21 +232,21 @@
           *ngFor="
             let movement of inventoryService.allStockMovements().slice(0, 5)
           "
-          class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+          class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
         >
           <div>
-            <p class="font-medium text-gray-900">{{ movement.productName }}</p>
-            <p class="text-sm text-gray-600">{{ movement.reason }}</p>
+            <p class="font-medium text-gray-900 dark:text-white">{{ movement.productName }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">{{ movement.reason }}</p>
           </div>
           <div class="text-right">
             <p
               [class]="
                 'text-sm font-medium ' +
                 (movement.type === 'in'
-                  ? 'text-green-600'
+                  ? 'text-green-600 dark:text-green-400'
                   : movement.type === 'out'
-                  ? 'text-red-600'
-                  : 'text-blue-600')
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-blue-600 dark:text-blue-400')
               "
             >
               {{
@@ -257,7 +257,7 @@
                   : "±"
               }}{{ movement.quantity }}
             </p>
-            <p class="text-xs text-gray-500">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
               {{ movement.timestamp | date : "short" }}
             </p>
           </div>
@@ -267,22 +267,22 @@
   </div>
 
   <!-- Category Overview -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">Category Overview</h3>
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-200">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Category Overview</h3>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div
         *ngFor="let category of inventoryService.allCategories()"
-        class="p-4 rounded-lg border border-gray-200"
+        class="p-4 rounded-lg border border-gray-200 dark:border-gray-700"
       >
         <div class="flex items-center gap-3 mb-2">
           <div [class]="'w-4 h-4 rounded-full ' + category.color"></div>
-          <h4 class="font-medium text-gray-900">{{ category.name }}</h4>
+          <h4 class="font-medium text-gray-900 dark:text-white">{{ category.name }}</h4>
         </div>
-        <p class="text-2xl font-bold text-gray-900">
+        <p class="text-2xl font-bold text-gray-900 dark:text-white">
           {{ getProductCountByCategory(category.name) }}
         </p>
-        <p class="text-sm text-gray-600">products</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">products</p>
       </div>
     </div>
   </div>

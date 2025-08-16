@@ -49,21 +49,21 @@ export class StockStatus {
 
   getStatusClass(): string {
     if (this.isOutOfStock()) {
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400';
     } else if (this.isLowStock()) {
-      return 'bg-orange-100 text-orange-800';
+      return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400';
     } else {
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400';
     }
   }
 
   getTextClass(): string {
     if (this.isOutOfStock()) {
-      return 'text-red-600';
+      return 'text-red-600 dark:text-red-400';
     } else if (this.isLowStock()) {
-      return 'text-orange-600';
+      return 'text-orange-600 dark:text-orange-400';
     } else {
-      return 'text-green-600';
+      return 'text-green-600 dark:text-green-400';
     }
   }
 

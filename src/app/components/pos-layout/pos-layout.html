@@ -1,13 +1,19 @@
-<div class="h-screen flex flex-col bg-gray-100">
+<div
+  class="h-screen flex flex-col bg-gray-100 dark:bg-gray-900 transition-colors duration-200"
+>
   <!-- Top Navigation -->
-  <nav class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+  <nav
+    class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors duration-200"
+  >
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <lucide-icon
           [img]="storeIcon"
-          class="w-8 h-8 text-blue-600"
+          class="w-8 h-8 text-blue-600 dark:text-blue-400"
         />
-        <h1 class="text-2xl font-bold text-gray-800">POS System</h1>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+          POS System
+        </h1>
       </div>
 
       <div class="flex items-center gap-2">
@@ -16,11 +22,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'dashboard'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="analyticsIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="analyticsIcon" class="w-4 h-4" />
           Dashboard
         </button>
 
@@ -29,11 +35,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'sales'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="storeIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="storeIcon" class="w-4 h-4" />
           Sales
         </button>
 
@@ -42,11 +48,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'products'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="packageIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="packageIcon" class="w-4 h-4" />
           Products
         </button>
 
@@ -55,11 +61,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'purchases'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="shoppingCartIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="shoppingCartIcon" class="w-4 h-4" />
           Purchases
         </button>
 
@@ -68,11 +74,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'stock'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="packageIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="packageIcon" class="w-4 h-4" />
           Stock
         </button>
 
@@ -81,11 +87,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'sales-returns'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="returnIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="returnIcon" class="w-4 h-4" />
           Returns
         </button>
 
@@ -94,11 +100,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'categories'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="tagIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="tagIcon" class="w-4 h-4" />
           Categories
         </button>
 
@@ -107,11 +113,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'suppliers'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="usersIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="usersIcon" class="w-4 h-4" />
           Suppliers
         </button>
 
@@ -120,11 +126,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'history'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="historyIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="historyIcon" class="w-4 h-4" />
           History
         </button>
 
@@ -133,11 +139,11 @@
           [class]="
             'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-200 ' +
             (activeTab() === 'settings'
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100')
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700')
           "
         >
-          <lucide-icon [img]="settingsIcon" class="w-4 h-4"/>
+          <lucide-icon [img]="settingsIcon" class="w-4 h-4" />
           Settings
         </button>
       </div>
@@ -149,85 +155,92 @@
     <!-- Dashboard View -->
     <div
       *ngIf="activeTab() === 'dashboard'"
-      class="flex-1 overflow-y-auto bg-gray-50"
+      class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800 transition-colors duration-200"
     >
-      <app-inventory-dashboard/>
+      <app-inventory-dashboard />
     </div>
 
     <!-- Sales View -->
     <div *ngIf="activeTab() === 'sales'" class="flex-1 flex">
       <!-- Products Section -->
       <div class="flex-1">
-        <app-product-grid/>
+        <app-product-grid />
       </div>
 
       <!-- Cart Section -->
-      <div class="w-96 border-l border-gray-200">
-        <app-cart (proceedToPayment)="showPayment.set(true)"/>
+      <div class="w-96 border-l border-gray-200 dark:border-gray-700">
+        <app-cart (proceedToPayment)="showPayment.set(true)" />
       </div>
     </div>
 
     <!-- Products Management View -->
-    <div *ngIf="activeTab() === 'products'" class="flex-1 bg-gray-50">
-      <app-product-management/>
+    <div
+      *ngIf="activeTab() === 'products'"
+      class="flex-1 bg-gray-50 dark:bg-gray-800 transition-colors duration-200"
+    >
+      <app-product-management />
     </div>
 
     <!-- Purchases Management View -->
-    <div *ngIf="activeTab() === 'purchases'" class="flex-1 bg-gray-50">
-      <app-purchase-management/>
+    <div
+      *ngIf="activeTab() === 'purchases'"
+      class="flex-1 bg-gray-50 dark:bg-gray-800 transition-colors duration-200"
+    >
+      <app-purchase-management />
     </div>
 
     <!-- Stock Management View -->
-    <div *ngIf="activeTab() === 'stock'" class="flex-1 bg-gray-50">
-      <app-stock-management/>
+    <div
+      *ngIf="activeTab() === 'stock'"
+      class="flex-1 bg-gray-50 dark:bg-gray-800 transition-colors duration-200"
+    >
+      <app-stock-management />
     </div>
 
     <!-- Sales Returns View -->
-    <div *ngIf="activeTab() === 'sales-returns'" class="flex-1 bg-gray-50">
+    <div
+      *ngIf="activeTab() === 'sales-returns'"
+      class="flex-1 bg-gray-50 dark:bg-gray-800 transition-colors duration-200"
+    >
       <div class="h-full flex flex-col">
         <div class="flex-1">
-          <app-sales-returns/>
+          <app-sales-returns />
         </div>
-        <div class="w-px bg-gray-200"></div>
+        <div class="w-px bg-gray-200 dark:bg-gray-700"></div>
         <div class="flex-1">
-          <app-purchase-returns/>
+          <app-purchase-returns />
         </div>
       </div>
     </div>
 
     <!-- Categories Management View -->
-    <div *ngIf="activeTab() === 'categories'" class="flex-1 bg-gray-50">
-      <app-category-management/>
+    <div
+      *ngIf="activeTab() === 'categories'"
+      class="flex-1 bg-gray-50 dark:bg-gray-800 transition-colors duration-200"
+    >
+      <app-category-management />
     </div>
 
     <!-- Suppliers Management View -->
-    <div *ngIf="activeTab() === 'suppliers'" class="flex-1 bg-gray-50">
-      <app-supplier-management/>
+    <div
+      *ngIf="activeTab() === 'suppliers'"
+      class="flex-1 bg-gray-50 dark:bg-gray-800 transition-colors duration-200"
+    >
+      <app-supplier-management />
     </div>
 
     <!-- History View -->
     <div *ngIf="activeTab() === 'history'" class="flex-1">
-      <div class="bg-white h-full">
-        <app-order-history/>
+      <div
+        class="bg-white dark:bg-gray-800 h-full transition-colors duration-200"
+      >
+        <app-order-history />
       </div>
     </div>
 
     <!-- Settings View -->
     <div *ngIf="activeTab() === 'settings'" class="flex-1 p-6">
-      <div class="bg-white rounded-xl shadow-sm h-full">
-        <div class="p-6 border-b border-gray-200">
-          <h2 class="text-xl font-bold text-gray-800">Settings</h2>
-        </div>
-        <div class="p-6">
-          <div class="text-center py-12">
-            <div class="text-6xl mb-4">⚙️</div>
-            <h3 class="text-lg font-semibold text-gray-600 mb-2">
-              System Settings
-            </h3>
-            <p class="text-gray-500">Configure your POS system settings here</p>
-          </div>
-        </div>
-      </div>
+      <app-settings />
     </div>
   </div>
 </div>
@@ -247,4 +260,4 @@
 />
 
 <!-- Notifications -->
-<app-notifications/>
+<app-notifications />

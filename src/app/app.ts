@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PosLayout } from './components/pos-layout/pos-layout';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,5 @@ import { PosLayout } from './components/pos-layout/pos-layout';
 })
 export class App {
   protected title = 'pos-frontend';
+  protected themeService = inject(ThemeService);
 }

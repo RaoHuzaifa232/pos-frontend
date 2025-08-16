@@ -1,6 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Store, History, Settings, BarChart3, Package, ShoppingCart, Users, CreditCard, RotateCcw, Tag } from 'lucide-angular';
+import { LucideAngularModule, Store, History, Settings as SettingsIcon, BarChart3, Package, ShoppingCart, Users, CreditCard, RotateCcw, Tag, Sun, Moon } from 'lucide-angular';
 import { ProductGrid } from '../product-grid/product-grid';
 import { Cart } from '../cart/cart';
 import { Payment } from '../payment/payment';
@@ -15,8 +15,10 @@ import { PurchaseReturns } from '../purchase-returns/purchase-returns';
 import { CategoryManagement } from '../category-management/category-management';
 import { SupplierManagement } from '../supplier-management/supplier-management';
 import { Notifications } from '../notifications/notifications';
+import { Settings } from '../settings/settings';
 import { PosService } from '../../services/pos.service';
 import { InventoryService } from '../../services/inventory.service';
+import { ThemeService } from '../../services/theme.service';
 import { Order } from '../../models/product.model';
 
 @Component({
@@ -38,14 +40,15 @@ import { Order } from '../../models/product.model';
     PurchaseReturns,
     CategoryManagement,
     SupplierManagement,
-    Notifications
+    Notifications,
+    Settings
   ],
   templateUrl: './pos-layout.html'
 })
 export class PosLayout {
   readonly storeIcon = Store;
   readonly historyIcon = History;
-  readonly settingsIcon = Settings;
+  readonly settingsIcon = SettingsIcon;
   readonly analyticsIcon = BarChart3;
   readonly packageIcon = Package;
   readonly shoppingCartIcon = ShoppingCart;
@@ -53,11 +56,15 @@ export class PosLayout {
   readonly creditCardIcon = CreditCard;
   readonly returnIcon = RotateCcw;
   readonly tagIcon = Tag;
+  readonly sunIcon = Sun;
+  readonly moonIcon = Moon;
 
   activeTab = signal<'dashboard' | 'sales' | 'products' | 'purchases' | 'stock' | 'sales-returns' | 'purchase-returns' | 'categories' | 'suppliers' | 'history' | 'settings'>('dashboard');
   showPayment = signal<boolean>(false);
   showReceipt = signal<boolean>(false);
   completedOrder = signal<Order | null>(null);
+
+  protected themeService = inject(ThemeService);
 
   constructor(private posService: PosService, private inventoryService: InventoryService) {}
 
@@ -80,5 +87,9 @@ export class PosLayout {
   onReceiptClosed() {
     this.showReceipt.set(false);
     this.completedOrder.set(null);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 }
