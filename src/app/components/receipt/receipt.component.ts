@@ -48,7 +48,7 @@ import { Order } from '../../models/product.model';
               <div class="flex-1">
                 <div class="font-medium text-gray-800">{{ item.product.name }}</div>
                 <div class="text-sm text-gray-500">
-                  {{ item.quantity }} × \${{ item.product.price | number:'1.2-2' }}
+                  {{ item.quantity }} × \${{ item.product.sellingPrice | number:'1.2-2' }}
                 </div>
               </div>
               <div class="font-semibold text-gray-800">

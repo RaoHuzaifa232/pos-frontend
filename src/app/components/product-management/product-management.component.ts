@@ -1,0 +1,443 @@
+import { Component, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LucideAngularModule, Plus, Search, Edit, Trash2, Package, AlertTriangle } from 'lucide-angular';
+import { InventoryService } from '../../services/inventory.service';
+import { Product } from '../../models/product.model';
+
+@Component({
+  selector: 'app-product-management',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule],
+  template: `
+    <div class="h-full flex flex-col">
+      <!-- Header -->
+      <div class="p-6 border-b border-gray-200 bg-white">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">Product Management</h2>
+            <p class="text-gray-600">Manage your product inventory</p>
+          </div>
+          <button
+            (click)="showAddForm.set(true)"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
+          >
+            <lucide-icon [img]="plusIcon" class="w-5 h-5"></lucide-icon>
+            Add Product
+          </button>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="flex gap-4">
+          <div class="flex-1 relative">
+            <lucide-icon [img]="searchIcon" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></lucide-icon>
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              (input)="onSearchChange()"
+              placeholder="Search products..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          
+          <select
+            [(ngModel)]="selectedCategory"
+            (change)="onCategoryChange()"
+            class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="">All Categories</option>
+            <option *ngFor="let category of inventoryService.allCategories()" [value]="category.name">
+              {{ category.name }}
+            </option>
+          </select>
+
+          <select
+            [(ngModel)]="stockFilter"
+            (change)="onStockFilterChange()"
+            class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="">All Stock</option>
+            <option value="low">Low Stock</option>
+            <option value="out">Out of Stock</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Products Table -->
+      <div class="flex-1 overflow-y-auto p-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost Price</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selling Price</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let product of filteredProducts(); trackBy: trackByProductId" class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                        <lucide-icon [img]="packageIcon" class="w-5 h-5 text-gray-600"></lucide-icon>
+                      </div>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
+                        <div class="text-sm text-gray-500">{{ product.barcode }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {{ product.category }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <span [class]="'text-sm font-medium ' + getStockStatusColor(product)">
+                        {{ product.stock }}
+                      </span>
+                      <lucide-icon 
+                        *ngIf="product.stock <= product.minStock"
+                        [img]="alertIcon" 
+                        class="w-4 h-4 text-orange-500 ml-2">
+                      </lucide-icon>
+                    </div>
+                    <div class="text-xs text-gray-500">Min: {{ product.minStock }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    \${{ product.costPrice | number:'1.2-2' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    \${{ product.sellingPrice | number:'1.2-2' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ product.supplier || 'N/A' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div class="flex items-center gap-2">
+                      <button
+                        (click)="editProduct(product)"
+                        class="text-blue-600 hover:text-blue-900 p-1 rounded"
+                      >
+                        <lucide-icon [img]="editIcon" class="w-4 h-4"></lucide-icon>
+                      </button>
+                      <button
+                        (click)="deleteProduct(product.id)"
+                        class="text-red-600 hover:text-red-900 p-1 rounded"
+                      >
+                        <lucide-icon [img]="trashIcon" class="w-4 h-4"></lucide-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="filteredProducts().length === 0" class="text-center py-12">
+            <div class="text-6xl mb-4">📦</div>
+            <h3 class="text-lg font-semibold text-gray-600 mb-2">No products found</h3>
+            <p class="text-gray-500">Try adjusting your search or filters</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div *ngIf="showAddForm() || editingProduct()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-xl font-bold text-gray-900">
+            {{ editingProduct() ? 'Edit Product' : 'Add New Product' }}
+          </h3>
+        </div>
+
+        <form (ngSubmit)="saveProduct()" class="p-6 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
+              <input
+                type="text"
+                [(ngModel)]="productForm.name"
+                name="name"
+                required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Barcode</label>
+              <input
+                type="text"
+                [(ngModel)]="productForm.barcode"
+                name="barcode"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+              <select
+                [(ngModel)]="productForm.category"
+                name="category"
+                required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select Category</option>
+                <option *ngFor="let category of inventoryService.allCategories()" [value]="category.name">
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+              <select
+                [(ngModel)]="productForm.supplier"
+                name="supplier"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select Supplier</option>
+                <option *ngFor="let supplier of inventoryService.allSuppliers()" [value]="supplier.name">
+                  {{ supplier.name }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Cost Price *</label>
+              <input
+                type="number"
+                [(ngModel)]="productForm.costPrice"
+                name="costPrice"
+                step="0.01"
+                min="0"
+                required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Selling Price *</label>
+              <input
+                type="number"
+                [(ngModel)]="productForm.sellingPrice"
+                name="sellingPrice"
+                step="0.01"
+                min="0"
+                required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Initial Stock *</label>
+              <input
+                type="number"
+                [(ngModel)]="productForm.stock"
+                name="stock"
+                min="0"
+                required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Stock *</label>
+              <input
+                type="number"
+                [(ngModel)]="productForm.minStock"
+                name="minStock"
+                min="0"
+                required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              [(ngModel)]="productForm.description"
+              name="description"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            ></textarea>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button
+              type="submit"
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+            >
+              {{ editingProduct() ? 'Update Product' : 'Add Product' }}
+            </button>
+            <button
+              type="button"
+              (click)="cancelForm()"
+              class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  `
+})
+export class ProductManagementComponent {
+  readonly plusIcon = Plus;
+  readonly searchIcon = Search;
+  readonly editIcon = Edit;
+  readonly trashIcon = Trash2;
+  readonly packageIcon = Package;
+  readonly alertIcon = AlertTriangle;
+
+  searchQuery = signal('');
+  selectedCategory = signal('');
+  stockFilter = signal('');
+  showAddForm = signal(false);
+  editingProduct = signal<Product | null>(null);
+
+  productForm = {
+    name: '',
+    barcode: '',
+    category: '',
+    supplier: '',
+    costPrice: 0,
+    sellingPrice: 0,
+    stock: 0,
+    minStock: 0,
+    description: ''
+  };
+
+  constructor(public inventoryService: InventoryService) {}
+
+  filteredProducts = computed(() => {
+    let products = this.inventoryService.allProducts();
+
+    // Filter by search query
+    const query = this.searchQuery().toLowerCase().trim();
+    if (query) {
+      products = products.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query) ||
+        p.barcode?.includes(query) ||
+        p.supplier?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by category
+    if (this.selectedCategory()) {
+      products = products.filter(p => p.category === this.selectedCategory());
+    }
+
+    // Filter by stock status
+    const stockFilter = this.stockFilter();
+    if (stockFilter === 'low') {
+      products = products.filter(p => p.stock <= p.minStock && p.stock > 0);
+    } else if (stockFilter === 'out') {
+      products = products.filter(p => p.stock === 0);
+    }
+
+    return products;
+  });
+
+  onSearchChange() {
+    // Trigger reactivity
+  }
+
+  onCategoryChange() {
+    // Trigger reactivity
+  }
+
+  onStockFilterChange() {
+    // Trigger reactivity
+  }
+
+  getStockStatusColor(product: Product): string {
+    if (product.stock === 0) return 'text-red-600';
+    if (product.stock <= product.minStock) return 'text-orange-600';
+    return 'text-green-600';
+  }
+
+  editProduct(product: Product) {
+    this.editingProduct.set(product);
+    this.productForm = {
+      name: product.name,
+      barcode: product.barcode || '',
+      category: product.category,
+      supplier: product.supplier || '',
+      costPrice: product.costPrice,
+      sellingPrice: product.sellingPrice,
+      stock: product.stock,
+      minStock: product.minStock,
+      description: product.description || ''
+    };
+  }
+
+  deleteProduct(id: string) {
+    if (confirm('Are you sure you want to delete this product?')) {
+      this.inventoryService.deleteProduct(id);
+    }
+  }
+
+  saveProduct() {
+    if (this.editingProduct()) {
+      // Update existing product
+      this.inventoryService.updateProduct(this.editingProduct()!.id, {
+        name: this.productForm.name,
+        barcode: this.productForm.barcode,
+        category: this.productForm.category,
+        supplier: this.productForm.supplier,
+        costPrice: this.productForm.costPrice,
+        sellingPrice: this.productForm.sellingPrice,
+        stock: this.productForm.stock,
+        minStock: this.productForm.minStock,
+        description: this.productForm.description
+      });
+    } else {
+      // Add new product
+      this.inventoryService.addProduct({
+        name: this.productForm.name,
+        barcode: this.productForm.barcode,
+        category: this.productForm.category,
+        supplier: this.productForm.supplier,
+        costPrice: this.productForm.costPrice,
+        sellingPrice: this.productForm.sellingPrice,
+        stock: this.productForm.stock,
+        minStock: this.productForm.minStock,
+        description: this.productForm.description
+      });
+    }
+
+    this.cancelForm();
+  }
+
+  cancelForm() {
+    this.showAddForm.set(false);
+    this.editingProduct.set(null);
+    this.productForm = {
+      name: '',
+      barcode: '',
+      category: '',
+      supplier: '',
+      costPrice: 0,
+      sellingPrice: 0,
+      stock: 0,
+      minStock: 0,
+      description: ''
+    };
+  }
+
+  trackByProductId(index: number, product: Product): string {
+    return product.id;
+  }
+}

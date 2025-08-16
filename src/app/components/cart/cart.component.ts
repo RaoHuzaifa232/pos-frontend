@@ -2,12 +2,13 @@ import { Component, computed, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ShoppingCart, Plus, Minus, Trash2, CreditCard } from 'lucide-angular';
 import { PosService } from '../../services/pos.service';
+import { StockStatusComponent } from '../stock-status/stock-status.component';
 import { CartItem } from '../../models/product.model';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, StockStatusComponent],
   template: `
     <div class="h-full flex flex-col bg-white">
       <!-- Cart Header -->
@@ -44,7 +45,8 @@ import { CartItem } from '../../models/product.model';
               <div class="flex-1 min-w-0">
                 <h3 class="font-semibold text-gray-800 truncate">{{ item.product.name }}</h3>
                 <p class="text-sm text-gray-500">{{ item.product.category }}</p>
-                <p class="text-lg font-bold text-green-600">\${{ item.product.price | number:'1.2-2' }}</p>
+                <p class="text-lg font-bold text-green-600">\${{ item.product.sellingPrice | number:'1.2-2' }}</p>
+                <app-stock-status [productId]="item.product.id" [minStock]="item.product.minStock"></app-stock-status>
               </div>
 
               <!-- Quantity Controls -->
@@ -141,7 +143,11 @@ export class CartComponent {
   cartFinalTotal = computed(() => this.cartTotal() + this.cartTax());
 
   increaseQuantity(productId: string, currentQuantity: number) {
-    this.posService.updateQuantity(productId, currentQuantity + 1);
+    try {
+      this.posService.updateQuantity(productId, currentQuantity + 1);
+    } catch (error: any) {
+      alert(error.message || 'Unable to increase quantity');
+    }
   }
 
   decreaseQuantity(productId: string, currentQuantity: number) {

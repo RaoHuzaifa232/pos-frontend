@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, Plus } from 'lucide-angular';
 import { PosService } from '../../services/pos.service';
+import { InventoryService } from '../../services/inventory.service';
+import { StockStatusComponent } from '../stock-status/stock-status.component';
 import { Product } from '../../models/product.model';
 
 @Component({
   selector: 'app-product-grid',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, StockStatusComponent],
   template: `
     <div class="h-full flex flex-col bg-gray-50">
       <!-- Header with search and categories -->
@@ -38,7 +40,7 @@ import { Product } from '../../models/product.model';
             All Products
           </button>
           <button
-            *ngFor="let category of posService.allCategories()"
+            *ngFor="let category of inventoryService.allCategories()"
             (click)="selectedCategory.set(category.name)"
             [class]="'px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ' + 
                      (selectedCategory() === category.name ? category.color + ' text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')"
@@ -66,15 +68,20 @@ import { Product } from '../../models/product.model';
               <h3 class="font-semibold text-gray-800 text-sm line-clamp-2">{{ product.name }}</h3>
               <p class="text-xs text-gray-500">{{ product.category }}</p>
               <div class="flex items-center justify-between">
-                <span class="text-lg font-bold text-green-600">\${{ product.price | number:'1.2-2' }}</span>
-                <span class="text-xs text-gray-400">Stock: {{ product.stock }}</span>
+                <span class="text-lg font-bold text-green-600">\${{ product.sellingPrice | number:'1.2-2' }}</span>
               </div>
+              <!-- Real-time Stock Status -->
+              <app-stock-status [productId]="product.id" [minStock]="product.minStock"></app-stock-status>
             </div>
 
             <!-- Add Button -->
-            <button class="w-full mt-3 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+            <button 
+              [disabled]="product.stock === 0"
+              [class]="'w-full mt-3 py-2 px-3 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 ' +
+                       (product.stock === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white')"
+            >
               <lucide-icon [img]="plusIcon" class="w-4 h-4"></lucide-icon>
-              Add to Cart
+              {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
             </button>
           </div>
         </div>
@@ -104,10 +111,10 @@ export class ProductGridComponent {
   searchQuery = signal('');
   selectedCategory = signal('all');
 
-  constructor(public posService: PosService) {}
+  constructor(public posService: PosService, public inventoryService: InventoryService) {}
 
   filteredProducts = computed(() => {
-    let products = this.posService.allProducts();
+    let products = this.inventoryService.allProducts();
     
     // Filter by category
     if (this.selectedCategory() !== 'all') {
@@ -132,7 +139,11 @@ export class ProductGridComponent {
   }
 
   addToCart(product: Product) {
-    this.posService.addToCart(product);
+    try {
+      this.posService.addToCart(product);
+    } catch (error: any) {
+      alert(error.message || 'Unable to add product to cart');
+    }
   }
 
   trackByProductId(index: number, product: Product): string {
