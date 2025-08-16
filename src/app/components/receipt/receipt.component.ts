@@ -1,0 +1,151 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { LucideAngularModule, X, Printer, Download } from 'lucide-angular';
+import { Order } from '../../models/product.model';
+
+@Component({
+  selector: 'app-receipt',
+  standalone: true,
+  imports: [CommonModule, LucideAngularModule],
+  template: `
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-100">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 class="text-2xl font-bold text-gray-800">Receipt</h2>
+          <button
+            (click)="closeReceipt()"
+            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <lucide-icon [img]="closeIcon" class="w-6 h-6 text-gray-500"></lucide-icon>
+          </button>
+        </div>
+
+        <!-- Receipt Content -->
+        <div class="p-6 max-h-96 overflow-y-auto">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800">POS System</h3>
+            <p class="text-sm text-gray-500">Thank you for your purchase!</p>
+            <p class="text-xs text-gray-400 mt-1">Order #{{ order.id }}</p>
+          </div>
+
+          <!-- Order Details -->
+          <div class="border-t border-b border-gray-200 py-4 mb-4">
+            <div class="text-sm text-gray-600 mb-2">
+              {{ order.timestamp | date:'medium' }}
+            </div>
+            <div *ngIf="order.customerName" class="text-sm text-gray-600 mb-2">
+              Customer: {{ order.customerName }}
+            </div>
+            <div class="text-sm text-gray-600">
+              Payment: {{ getPaymentMethodName(order.paymentMethod) }}
+            </div>
+          </div>
+
+          <!-- Items -->
+          <div class="space-y-3 mb-4">
+            <div *ngFor="let item of order.items" class="flex justify-between items-start">
+              <div class="flex-1">
+                <div class="font-medium text-gray-800">{{ item.product.name }}</div>
+                <div class="text-sm text-gray-500">
+                  {{ item.quantity }} × \${{ item.product.price | number:'1.2-2' }}
+                </div>
+              </div>
+              <div class="font-semibold text-gray-800">
+                \${{ item.subtotal | number:'1.2-2' }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Totals -->
+          <div class="border-t border-gray-200 pt-4 space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Subtotal:</span>
+              <span>\${{ order.total | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Tax:</span>
+              <span>\${{ order.tax | number:'1.2-2' }}</span>
+            </div>
+            <div *ngIf="order.discount > 0" class="flex justify-between text-sm">
+              <span class="text-gray-600">Discount:</span>
+              <span class="text-green-600">-\${{ order.discount | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between text-lg font-bold border-t pt-2">
+              <span>Total:</span>
+              <span class="text-green-600">\${{ order.finalTotal | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="text-center mt-6 pt-4 border-t border-gray-200">
+            <p class="text-xs text-gray-500">
+              Thank you for shopping with us!
+            </p>
+            <p class="text-xs text-gray-400 mt-1">
+              Visit us again soon
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="p-6 border-t border-gray-200 space-y-3">
+          <div class="flex gap-3">
+            <button
+              (click)="printReceipt()"
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              <lucide-icon [img]="printerIcon" class="w-5 h-5"></lucide-icon>
+              Print
+            </button>
+            
+            <button
+              (click)="downloadReceipt()"
+              class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              <lucide-icon [img]="downloadIcon" class="w-5 h-5"></lucide-icon>
+              Download
+            </button>
+          </div>
+          
+          <button
+            (click)="closeReceipt()"
+            class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors duration-200"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  `
+})
+export class ReceiptComponent {
+  @Input() order!: Order;
+  @Output() receiptClosed = new EventEmitter<void>();
+
+  readonly closeIcon = X;
+  readonly printerIcon = Printer;
+  readonly downloadIcon = Download;
+
+  getPaymentMethodName(method: string): string {
+    const methods: { [key: string]: string } = {
+      'cash': 'Cash',
+      'card': 'Credit/Debit Card',
+      'digital': 'Digital Wallet'
+    };
+    return methods[method] || method;
+  }
+
+  printReceipt() {
+    window.print();
+  }
+
+  downloadReceipt() {
+    // In a real app, this would generate a PDF or other format
+    console.log('Downloading receipt...', this.order);
+  }
+
+  closeReceipt() {
+    this.receiptClosed.emit();
+  }
+}
