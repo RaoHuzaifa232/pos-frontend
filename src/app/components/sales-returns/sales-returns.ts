@@ -1,15 +1,27 @@
-import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Plus, Search, RotateCcw, Calendar, DollarSign, Edit, Trash2, Check, X, Clock } from 'lucide-angular';
-import { InventoryService } from '../../services/inventory.service';
+import {
+  Calendar,
+  Check,
+  Clock,
+  DollarSign,
+  SquarePen,
+  LucideAngularModule,
+  Plus,
+  RotateCcw,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-angular';
 import { SalesReturn } from '../../models/product.model';
+import { InventoryService } from '../../services/inventory.service';
 
 @Component({
   selector: 'app-sales-returns',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
-  templateUrl: './sales-returns.html'
+  templateUrl: './sales-returns.html',
 })
 export class SalesReturns {
   readonly plusIcon = Plus;
@@ -17,7 +29,7 @@ export class SalesReturns {
   readonly returnIcon = RotateCcw;
   readonly calendarIcon = Calendar;
   readonly dollarIcon = DollarSign;
-  readonly editIcon = Edit;
+  readonly editIcon = SquarePen;
   readonly trashIcon = Trash2;
   readonly checkIcon = Check;
   readonly xIcon = X;
@@ -38,7 +50,7 @@ export class SalesReturns {
     returnDate: new Date().toISOString().split('T')[0],
     reason: '',
     status: 'pending' as 'pending' | 'approved' | 'rejected',
-    notes: ''
+    notes: '',
   };
 
   constructor(public inventoryService: InventoryService) {}
@@ -48,19 +60,23 @@ export class SalesReturns {
 
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      returns = returns.filter(r =>
-        r.productName.toLowerCase().includes(query) ||
-        r.customerName?.toLowerCase().includes(query) ||
-        r.orderId.toLowerCase().includes(query) ||
-        r.reason.toLowerCase().includes(query)
+      returns = returns.filter(
+        (r) =>
+          r.productName.toLowerCase().includes(query) ||
+          r.customerName?.toLowerCase().includes(query) ||
+          r.orderId.toLowerCase().includes(query) ||
+          r.reason.toLowerCase().includes(query)
       );
     }
 
     if (this.statusFilter()) {
-      returns = returns.filter(r => r.status === this.statusFilter());
+      returns = returns.filter((r) => r.status === this.statusFilter());
     }
 
-    return returns.sort((a, b) => new Date(b.returnDate).getTime() - new Date(a.returnDate).getTime());
+    return returns.sort(
+      (a, b) =>
+        new Date(b.returnDate).getTime() - new Date(a.returnDate).getTime()
+    );
   });
 
   onSearchChange() {
@@ -72,7 +88,9 @@ export class SalesReturns {
   }
 
   onProductSelect() {
-    const product = this.inventoryService.allProducts().find(p => p.id === this.returnForm.productId);
+    const product = this.inventoryService
+      .allProducts()
+      .find((p) => p.id === this.returnForm.productId);
     if (product) {
       this.returnForm.productName = product.name;
       this.returnForm.unitPrice = product.sellingPrice;
@@ -85,24 +103,36 @@ export class SalesReturns {
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   }
 
   getStatusIcon(status: string) {
     switch (status) {
-      case 'pending': return this.clockIcon;
-      case 'approved': return this.checkIcon;
-      case 'rejected': return this.xIcon;
-      default: return this.clockIcon;
+      case 'pending':
+        return this.clockIcon;
+      case 'approved':
+        return this.checkIcon;
+      case 'rejected':
+        return this.xIcon;
+      default:
+        return this.clockIcon;
     }
   }
 
   approveReturn(id: string) {
-    if (confirm('Are you sure you want to approve this return? This will add the items back to stock.')) {
+    if (
+      confirm(
+        'Are you sure you want to approve this return? This will add the items back to stock.'
+      )
+    ) {
       this.inventoryService.updateSalesReturn(id, { status: 'approved' });
     }
   }
@@ -125,7 +155,7 @@ export class SalesReturns {
       returnDate: salesReturn.returnDate.toISOString().split('T')[0],
       reason: salesReturn.reason,
       status: salesReturn.status,
-      notes: salesReturn.notes || ''
+      notes: salesReturn.notes || '',
     };
   }
 
@@ -149,10 +179,13 @@ export class SalesReturns {
         returnDate: new Date(this.returnForm.returnDate),
         reason: this.returnForm.reason,
         status: this.returnForm.status,
-        notes: this.returnForm.notes || undefined
+        notes: this.returnForm.notes || undefined,
       };
 
-      this.inventoryService.updateSalesReturn(this.editingReturn()!.id, updates);
+      this.inventoryService.updateSalesReturn(
+        this.editingReturn()!.id,
+        updates
+      );
     } else {
       // Add new return
       const salesReturn: Omit<SalesReturn, 'id'> = {
@@ -166,7 +199,7 @@ export class SalesReturns {
         returnDate: new Date(this.returnForm.returnDate),
         reason: this.returnForm.reason,
         status: this.returnForm.status,
-        notes: this.returnForm.notes || undefined
+        notes: this.returnForm.notes || undefined,
       };
 
       this.inventoryService.addSalesReturn(salesReturn);
@@ -188,25 +221,26 @@ export class SalesReturns {
       returnDate: new Date().toISOString().split('T')[0],
       reason: '',
       status: 'pending',
-      notes: ''
+      notes: '',
     };
   }
 
   getPendingReturns(): number {
-    return this.inventoryService.allSalesReturns().filter(r => r.status === 'pending').length;
+    return this.inventoryService
+      .allSalesReturns()
+      .filter((r) => r.status === 'pending').length;
   }
 
   getApprovedReturns(): number {
-    return this.inventoryService.allSalesReturns().filter(r => r.status === 'approved').length;
+    return this.inventoryService
+      .allSalesReturns()
+      .filter((r) => r.status === 'approved').length;
   }
 
   getTotalReturnAmount(): number {
-    return this.inventoryService.allSalesReturns()
-      .filter(r => r.status === 'approved')
+    return this.inventoryService
+      .allSalesReturns()
+      .filter((r) => r.status === 'approved')
       .reduce((total, r) => total + r.totalAmount, 0);
-  }
-
-  trackByReturnId(index: number, salesReturn: SalesReturn): string {
-    return salesReturn.id;
   }
 }

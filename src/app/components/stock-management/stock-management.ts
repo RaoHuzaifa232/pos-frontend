@@ -1,23 +1,31 @@
-import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Package, Plus, Minus, Edit, Search, AlertTriangle } from 'lucide-angular';
-import { InventoryService } from '../../services/inventory.service';
+import {
+  TriangleAlert,
+  SquarePen,
+  LucideAngularModule,
+  Minus,
+  Package,
+  Plus,
+  Search,
+} from 'lucide-angular';
 import { Product } from '../../models/product.model';
+import { InventoryService } from '../../services/inventory.service';
 
 @Component({
   selector: 'app-stock-management',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
-  templateUrl: './stock-management.html'
+  templateUrl: './stock-management.html',
 })
 export class StockManagement {
   readonly packageIcon = Package;
   readonly plusIcon = Plus;
   readonly minusIcon = Minus;
-  readonly editIcon = Edit;
+  readonly editIcon = SquarePen;
   readonly searchIcon = Search;
-  readonly alertIcon = AlertTriangle;
+  readonly alertIcon = TriangleAlert;
 
   searchQuery = signal('');
   adjustingProduct = signal<Product | null>(null);
@@ -25,7 +33,7 @@ export class StockManagement {
   adjustmentForm = {
     newStock: 0,
     reason: '',
-    customReason: ''
+    customReason: '',
   };
 
   constructor(public inventoryService: InventoryService) {}
@@ -35,10 +43,11 @@ export class StockManagement {
 
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      products = products.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query) ||
-        p.barcode?.includes(query)
+      products = products.filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          p.barcode?.includes(query)
       );
     }
 
@@ -79,9 +88,10 @@ export class StockManagement {
     const product = this.adjustingProduct();
     if (!product) return;
 
-    const reason = this.adjustmentForm.reason === 'Other' 
-      ? this.adjustmentForm.customReason 
-      : this.adjustmentForm.reason;
+    const reason =
+      this.adjustmentForm.reason === 'Other'
+        ? this.adjustmentForm.customReason
+        : this.adjustmentForm.reason;
 
     this.inventoryService.adjustStock(
       product.id,
@@ -97,11 +107,7 @@ export class StockManagement {
     this.adjustmentForm = {
       newStock: 0,
       reason: '',
-      customReason: ''
+      customReason: '',
     };
-  }
-
-  trackByProductId(index: number, product: Product): string {
-    return product.id;
   }
 }

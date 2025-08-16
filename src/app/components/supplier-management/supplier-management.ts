@@ -1,20 +1,31 @@
-import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Plus, Search, Edit, Trash2, Users, Phone, Mail, MapPin, Package } from 'lucide-angular';
-import { InventoryService } from '../../services/inventory.service';
+import {
+  SquarePen,
+  LucideAngularModule,
+  Mail,
+  MapPin,
+  Package,
+  Phone,
+  Plus,
+  Search,
+  Trash2,
+  Users,
+} from 'lucide-angular';
 import { Supplier } from '../../models/product.model';
+import { InventoryService } from '../../services/inventory.service';
 
 @Component({
   selector: 'app-supplier-management',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
-  templateUrl: './supplier-management.html'
+  templateUrl: './supplier-management.html',
 })
 export class SupplierManagement {
   readonly plusIcon = Plus;
   readonly searchIcon = Search;
-  readonly editIcon = Edit;
+  readonly editIcon = SquarePen;
   readonly trashIcon = Trash2;
   readonly usersIcon = Users;
   readonly phoneIcon = Phone;
@@ -31,7 +42,7 @@ export class SupplierManagement {
     contact: '',
     email: '',
     phone: '',
-    address: ''
+    address: '',
   };
 
   constructor(public inventoryService: InventoryService) {}
@@ -41,11 +52,12 @@ export class SupplierManagement {
 
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      suppliers = suppliers.filter(s =>
-        s.name.toLowerCase().includes(query) ||
-        s.contact.toLowerCase().includes(query) ||
-        s.email?.toLowerCase().includes(query) ||
-        s.phone?.includes(query)
+      suppliers = suppliers.filter(
+        (s) =>
+          s.name.toLowerCase().includes(query) ||
+          s.contact.toLowerCase().includes(query) ||
+          s.email?.toLowerCase().includes(query) ||
+          s.phone?.includes(query)
       );
     }
 
@@ -61,12 +73,15 @@ export class SupplierManagement {
   }
 
   getPurchaseCount(supplierName: string): number {
-    return this.inventoryService.allPurchases().filter(p => p.supplier === supplierName).length;
+    return this.inventoryService
+      .allPurchases()
+      .filter((p) => p.supplier === supplierName).length;
   }
 
   getPurchaseValue(supplierName: string): number {
-    return this.inventoryService.allPurchases()
-      .filter(p => p.supplier === supplierName)
+    return this.inventoryService
+      .allPurchases()
+      .filter((p) => p.supplier === supplierName)
       .reduce((total, p) => total + p.totalCost, 0);
   }
 
@@ -74,7 +89,9 @@ export class SupplierManagement {
     // This could navigate to products filtered by supplier
     // For now, just show an alert
     const products = this.getProductCount(supplierName);
-    alert(`${supplierName} supplies ${products} product(s). This would navigate to the products view filtered by this supplier.`);
+    alert(
+      `${supplierName} supplies ${products} product(s). This would navigate to the products view filtered by this supplier.`
+    );
   }
 
   contactSupplier(email: string) {
@@ -89,23 +106,31 @@ export class SupplierManagement {
       contact: supplier.contact,
       email: supplier.email || '',
       phone: supplier.phone || '',
-      address: supplier.address || ''
+      address: supplier.address || '',
     };
   }
 
   deleteSupplier(id: string) {
-    const supplier = this.inventoryService.allSuppliers().find(s => s.id === id);
+    const supplier = this.inventoryService
+      .allSuppliers()
+      .find((s) => s.id === id);
     if (!supplier) return;
 
     const productCount = this.getProductCount(supplier.name);
     const purchaseCount = this.getPurchaseCount(supplier.name);
 
     if (productCount > 0 || purchaseCount > 0) {
-      alert(`Cannot delete supplier "${supplier.name}" because they have ${productCount} product(s) and ${purchaseCount} purchase(s) associated. Please reassign or remove these first.`);
+      alert(
+        `Cannot delete supplier "${supplier.name}" because they have ${productCount} product(s) and ${purchaseCount} purchase(s) associated. Please reassign or remove these first.`
+      );
       return;
     }
 
-    if (confirm(`Are you sure you want to delete the supplier "${supplier.name}"?`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete the supplier "${supplier.name}"?`
+      )
+    ) {
       this.inventoryService.deleteSupplier(id);
     }
   }
@@ -118,7 +143,7 @@ export class SupplierManagement {
         contact: this.supplierForm.contact,
         email: this.supplierForm.email || undefined,
         phone: this.supplierForm.phone || undefined,
-        address: this.supplierForm.address || undefined
+        address: this.supplierForm.address || undefined,
       });
     } else {
       // Add new supplier
@@ -127,7 +152,7 @@ export class SupplierManagement {
         contact: this.supplierForm.contact,
         email: this.supplierForm.email || undefined,
         phone: this.supplierForm.phone || undefined,
-        address: this.supplierForm.address || undefined
+        address: this.supplierForm.address || undefined,
       });
     }
 
@@ -142,11 +167,7 @@ export class SupplierManagement {
       contact: '',
       email: '',
       phone: '',
-      address: ''
+      address: '',
     };
-  }
-
-  trackBySupplierId(index: number, supplier: Supplier): string {
-    return supplier.id;
   }
 }

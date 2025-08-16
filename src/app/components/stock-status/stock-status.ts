@@ -1,36 +1,49 @@
-import { Component, Input, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, AlertTriangle, CheckCircle, XCircle } from 'lucide-angular';
+import { Component, Input, computed, inject } from '@angular/core';
+import {
+  CircleCheckBig,
+  CircleX,
+  LucideAngularModule,
+  TriangleAlert,
+} from 'lucide-angular';
 import { InventoryService } from '../../services/inventory.service';
 
 @Component({
   selector: 'app-stock-status',
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
-  templateUrl: './stock-status.html'
+  templateUrl: './stock-status.html',
 })
 export class StockStatus {
   @Input() productId!: string;
   @Input() minStock?: number;
-  
+
   private inventoryService = inject(InventoryService);
-  
-  readonly alertIcon = AlertTriangle;
-  readonly checkIcon = CheckCircle;
-  readonly xIcon = XCircle;
+
+  readonly alertIcon = TriangleAlert;
+  readonly checkIcon = CircleCheckBig;
+  readonly xIcon = CircleX;
 
   currentStock = computed(() => {
-    const product = this.inventoryService.allProducts().find(p => p.id === this.productId);
+    const product = this.inventoryService
+      .allProducts()
+      .find((p) => p.id === this.productId);
     return product ? product.stock : 0;
   });
 
   isLowStock = computed(() => {
-    const product = this.inventoryService.allProducts().find(p => p.id === this.productId);
-    return product ? product.stock <= product.minStock && product.stock > 0 : false;
+    const product = this.inventoryService
+      .allProducts()
+      .find((p) => p.id === this.productId);
+    return product
+      ? product.stock <= product.minStock && product.stock > 0
+      : false;
   });
 
   isOutOfStock = computed(() => {
-    const product = this.inventoryService.allProducts().find(p => p.id === this.productId);
+    const product = this.inventoryService
+      .allProducts()
+      .find((p) => p.id === this.productId);
     return product ? product.stock === 0 : true;
   });
 

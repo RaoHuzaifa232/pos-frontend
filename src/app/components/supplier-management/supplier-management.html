@@ -10,7 +10,7 @@
         (click)="showAddForm.set(true)"
         class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
       >
-        <lucide-icon [img]="plusIcon" class="w-5 h-5"></lucide-icon>
+        <lucide-icon [img]="plusIcon" class="w-5 h-5" />
         Add Supplier
       </button>
     </div>
@@ -19,8 +19,8 @@
     <div class="relative">
       <lucide-icon
         [img]="searchIcon"
-        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
-      ></lucide-icon>
+        class="absolute left-[6px] top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
+      />
       <input
         type="text"
         [(ngModel)]="searchQuery"
@@ -34,8 +34,8 @@
   <!-- Suppliers Grid -->
   <div class="flex-1 overflow-y-auto p-6">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for(supplier of filteredSuppliers(); track $index){
       <div
-        *ngFor="let supplier of filteredSuppliers(); trackBy: trackBySupplierId"
         class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200"
       >
         <!-- Supplier Header -->
@@ -44,10 +44,7 @@
             <div
               class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center"
             >
-              <lucide-icon
-                [img]="usersIcon"
-                class="w-6 h-6 text-teal-600"
-              ></lucide-icon>
+              <lucide-icon [img]="usersIcon" class="w-6 h-6 text-teal-600" />
             </div>
             <div>
               <h3 class="text-lg font-semibold text-gray-900">
@@ -63,44 +60,36 @@
               class="text-blue-600 hover:text-blue-900 p-1 rounded transition-colors"
               title="Edit Supplier"
             >
-              <lucide-icon [img]="editIcon" class="w-4 h-4"></lucide-icon>
+              <lucide-icon [img]="editIcon" class="w-4 h-4" />
             </button>
             <button
               (click)="deleteSupplier(supplier.id)"
               class="text-red-600 hover:text-red-900 p-1 rounded transition-colors"
               title="Delete Supplier"
             >
-              <lucide-icon [img]="trashIcon" class="w-4 h-4"></lucide-icon>
+              <lucide-icon [img]="trashIcon" class="w-4 h-4" />
             </button>
           </div>
         </div>
 
         <!-- Contact Information -->
         <div class="space-y-2 mb-4">
-          <div
-            *ngIf="supplier.email"
-            class="flex items-center gap-2 text-sm text-gray-600"
-          >
-            <lucide-icon [img]="mailIcon" class="w-4 h-4"></lucide-icon>
+          @if(supplier.email){
+          <div class="flex items-center gap-2 text-sm text-gray-600">
+            <lucide-icon [img]="mailIcon" class="w-4 h-4" />
             <span>{{ supplier.email }}</span>
           </div>
-          <div
-            *ngIf="supplier.phone"
-            class="flex items-center gap-2 text-sm text-gray-600"
-          >
-            <lucide-icon [img]="phoneIcon" class="w-4 h-4"></lucide-icon>
+          } @if(supplier.phone){
+          <div class="flex items-center gap-2 text-sm text-gray-600">
+            <lucide-icon [img]="phoneIcon" class="w-4 h-4" />
             <span>{{ supplier.phone }}</span>
           </div>
-          <div
-            *ngIf="supplier.address"
-            class="flex items-start gap-2 text-sm text-gray-600"
-          >
-            <lucide-icon
-              [img]="mapPinIcon"
-              class="w-4 h-4 mt-0.5"
-            ></lucide-icon>
+          } @if(supplier.address){
+          <div class="flex items-start gap-2 text-sm text-gray-600">
+            <lucide-icon [img]="mapPinIcon" class="w-4 h-4 mt-0.5" />
             <span>{{ supplier.address }}</span>
           </div>
+          }
         </div>
 
         <!-- Supplier Stats -->
@@ -120,7 +109,8 @@
           <div class="flex items-center justify-between text-sm mt-1">
             <span class="text-gray-600">Purchase Value:</span>
             <span class="font-medium text-green-600"
-              >PKR {{ getPurchaseValue(supplier.name) | number : "1.2-2" }}</span
+              >PKR
+              {{ getPurchaseValue(supplier.name) | number : "1.2-2" }}</span
             >
           </div>
         </div>
@@ -132,24 +122,27 @@
               (click)="viewProducts(supplier.name)"
               class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-1"
             >
-              <lucide-icon [img]="packageIcon" class="w-4 h-4"></lucide-icon>
+              <lucide-icon [img]="packageIcon" class="w-4 h-4" />
               Products
             </button>
+            @if(supplier.email){
             <button
-              *ngIf="supplier.email"
               (click)="contactSupplier(supplier.email!)"
               class="flex-1 bg-teal-100 hover:bg-teal-200 text-teal-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-1"
             >
-              <lucide-icon [img]="mailIcon" class="w-4 h-4"></lucide-icon>
+              <lucide-icon [img]="mailIcon" class="w-4 h-4" />
               Contact
             </button>
+            }
           </div>
         </div>
       </div>
+      }
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="filteredSuppliers().length === 0" class="text-center py-12">
+    @if(filteredSuppliers().length === 0){
+    <div class="text-center py-12">
       <div class="text-6xl mb-4">👥</div>
       <h3 class="text-lg font-semibold text-gray-600 mb-2">
         No suppliers found
@@ -158,12 +151,13 @@
         Add your first supplier to start managing relationships
       </p>
     </div>
+    }
   </div>
 </div>
 
 <!-- Add/Edit Supplier Modal -->
+@if(showAddForm() || editingSupplier()){
 <div
-  *ngIf="showAddForm() || editingSupplier()"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
 >
   <div
@@ -258,3 +252,4 @@
     </form>
   </div>
 </div>
+}

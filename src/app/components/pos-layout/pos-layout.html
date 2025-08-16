@@ -6,7 +6,7 @@
         <lucide-icon
           [img]="storeIcon"
           class="w-8 h-8 text-blue-600"
-        ></lucide-icon>
+        />
         <h1 class="text-2xl font-bold text-gray-800">POS System</h1>
       </div>
 
@@ -20,7 +20,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="analyticsIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="analyticsIcon" class="w-4 h-4"/>
           Dashboard
         </button>
 
@@ -33,7 +33,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="storeIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="storeIcon" class="w-4 h-4"/>
           Sales
         </button>
 
@@ -46,7 +46,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="packageIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="packageIcon" class="w-4 h-4"/>
           Products
         </button>
 
@@ -59,7 +59,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="shoppingCartIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="shoppingCartIcon" class="w-4 h-4"/>
           Purchases
         </button>
 
@@ -72,7 +72,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="packageIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="packageIcon" class="w-4 h-4"/>
           Stock
         </button>
 
@@ -85,7 +85,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="returnIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="returnIcon" class="w-4 h-4"/>
           Returns
         </button>
 
@@ -98,7 +98,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="tagIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="tagIcon" class="w-4 h-4"/>
           Categories
         </button>
 
@@ -111,7 +111,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="usersIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="usersIcon" class="w-4 h-4"/>
           Suppliers
         </button>
 
@@ -124,7 +124,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="historyIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="historyIcon" class="w-4 h-4"/>
           History
         </button>
 
@@ -137,7 +137,7 @@
               : 'text-gray-600 hover:bg-gray-100')
           "
         >
-          <lucide-icon [img]="settingsIcon" class="w-4 h-4"></lucide-icon>
+          <lucide-icon [img]="settingsIcon" class="w-4 h-4"/>
           Settings
         </button>
       </div>
@@ -145,70 +145,70 @@
   </nav>
 
   <!-- Main Content -->
-  <div class="flex-1 flex overflow-hidden">
+  <div class="flex-1 flex">
     <!-- Dashboard View -->
     <div
       *ngIf="activeTab() === 'dashboard'"
       class="flex-1 overflow-y-auto bg-gray-50"
     >
-      <app-inventory-dashboard></app-inventory-dashboard>
+      <app-inventory-dashboard/>
     </div>
 
     <!-- Sales View -->
     <div *ngIf="activeTab() === 'sales'" class="flex-1 flex">
       <!-- Products Section -->
       <div class="flex-1">
-        <app-product-grid></app-product-grid>
+        <app-product-grid/>
       </div>
 
       <!-- Cart Section -->
       <div class="w-96 border-l border-gray-200">
-        <app-cart (proceedToPayment)="showPayment.set(true)"></app-cart>
+        <app-cart (proceedToPayment)="showPayment.set(true)"/>
       </div>
     </div>
 
     <!-- Products Management View -->
     <div *ngIf="activeTab() === 'products'" class="flex-1 bg-gray-50">
-      <app-product-management></app-product-management>
+      <app-product-management/>
     </div>
 
     <!-- Purchases Management View -->
     <div *ngIf="activeTab() === 'purchases'" class="flex-1 bg-gray-50">
-      <app-purchase-management></app-purchase-management>
+      <app-purchase-management/>
     </div>
 
     <!-- Stock Management View -->
     <div *ngIf="activeTab() === 'stock'" class="flex-1 bg-gray-50">
-      <app-stock-management></app-stock-management>
+      <app-stock-management/>
     </div>
 
     <!-- Sales Returns View -->
     <div *ngIf="activeTab() === 'sales-returns'" class="flex-1 bg-gray-50">
-      <div class="h-full flex">
+      <div class="h-full flex flex-col">
         <div class="flex-1">
-          <app-sales-returns></app-sales-returns>
+          <app-sales-returns/>
         </div>
         <div class="w-px bg-gray-200"></div>
         <div class="flex-1">
-          <app-purchase-returns></app-purchase-returns>
+          <app-purchase-returns/>
         </div>
       </div>
     </div>
 
     <!-- Categories Management View -->
     <div *ngIf="activeTab() === 'categories'" class="flex-1 bg-gray-50">
-      <app-category-management></app-category-management>
+      <app-category-management/>
     </div>
 
     <!-- Suppliers Management View -->
     <div *ngIf="activeTab() === 'suppliers'" class="flex-1 bg-gray-50">
-      <app-supplier-management></app-supplier-management>
+      <app-supplier-management/>
     </div>
 
     <!-- History View -->
     <div *ngIf="activeTab() === 'history'" class="flex-1">
       <div class="bg-white h-full">
-        <app-order-history></app-order-history>
+        <app-order-history/>
       </div>
     </div>
 
@@ -237,14 +237,14 @@
   *ngIf="showPayment()"
   (paymentComplete)="onPaymentComplete()"
   (paymentCancelled)="onPaymentCancelled()"
-></app-payment>
+/>
 
 <!-- Receipt Modal -->
 <app-receipt
   *ngIf="showReceipt() && completedOrder()"
   [order]="completedOrder()!"
   (receiptClosed)="onReceiptClosed()"
-></app-receipt>
+/>
 
 <!-- Notifications -->
-<app-notifications></app-notifications>
+<app-notifications/>

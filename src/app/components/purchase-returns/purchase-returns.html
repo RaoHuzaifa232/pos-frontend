@@ -20,7 +20,7 @@
       <div class="flex-1 relative">
         <lucide-icon
           [img]="searchIcon"
-          class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
+          class="absolute left-[6px] top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
         ></lucide-icon>
         <input
           type="text"
@@ -472,9 +472,8 @@
             >Total Return Amount:</span
           >
           <span class="text-2xl font-bold text-purple-600">
-            PKR {{
-              returnForm.quantity * returnForm.unitPrice | number : "1.2-2"
-            }}
+            PKR
+            {{ returnForm.quantity * returnForm.unitPrice | number : "1.2-2" }}
           </span>
         </div>
       </div>

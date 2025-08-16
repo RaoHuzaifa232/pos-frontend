@@ -11,11 +11,11 @@ export interface Notification {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
   private notifications = signal<Notification[]>([]);
-  
+
   readonly allNotifications = this.notifications.asReadonly();
 
   showNotification(notification: Omit<Notification, 'id' | 'timestamp'>) {
@@ -24,10 +24,13 @@ export class NotificationService {
       id: Date.now().toString(),
       timestamp: new Date(),
       autoClose: notification.autoClose ?? true,
-      duration: notification.duration ?? 5000
+      duration: notification.duration ?? 5000,
     };
 
-    this.notifications.update(notifications => [newNotification, ...notifications]);
+    this.notifications.update((notifications) => [
+      newNotification,
+      ...notifications,
+    ]);
 
     // Auto-close notification if enabled
     if (newNotification.autoClose) {
@@ -40,8 +43,8 @@ export class NotificationService {
   }
 
   removeNotification(id: string) {
-    this.notifications.update(notifications => 
-      notifications.filter(n => n.id !== id)
+    this.notifications.update((notifications) =>
+      notifications.filter((n) => n.id !== id)
     );
   }
 
@@ -55,7 +58,7 @@ export class NotificationService {
       type: 'success',
       title,
       message,
-      autoClose
+      autoClose,
     });
   }
 
@@ -64,7 +67,7 @@ export class NotificationService {
       type: 'warning',
       title,
       message,
-      autoClose
+      autoClose,
     });
   }
 
@@ -73,7 +76,7 @@ export class NotificationService {
       type: 'error',
       title,
       message,
-      autoClose
+      autoClose,
     });
   }
 
@@ -82,7 +85,7 @@ export class NotificationService {
       type: 'info',
       title,
       message,
-      autoClose
+      autoClose,
     });
   }
 

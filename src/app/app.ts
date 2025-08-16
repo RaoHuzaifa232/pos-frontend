@@ -4,7 +4,7 @@ import { PosLayout } from './components/pos-layout/pos-layout';
 @Component({
   selector: 'app-root',
   imports: [PosLayout],
-  template: '<app-pos-layout/>',
+  templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
