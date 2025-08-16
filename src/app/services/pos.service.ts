@@ -113,7 +113,7 @@ export class PosService {
   processOrder(paymentMethod: 'cash' | 'card' | 'digital', customerName?: string): Order {
     const cartItems = this.cart();
     const subtotal = this.getCartTotal();
-    const tax = subtotal * 0.08; // 8% tax
+    const tax = subtotal * 0; // 8% tax
     const discount = 0; // Can be implemented later
     const finalTotal = subtotal + tax - discount;
 

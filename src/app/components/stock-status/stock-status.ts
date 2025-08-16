@@ -7,22 +7,9 @@ import { InventoryService } from '../../services/inventory.service';
   selector: 'app-stock-status',
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
-  template: `
-    <div class="flex items-center gap-2">
-      <!-- Stock Level Indicator -->
-      <div [class]="'flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ' + getStatusClass()">
-        <lucide-icon [img]="getStatusIcon()" class="w-3 h-3"></lucide-icon>
-        <span>{{ currentStock() }}</span>
-      </div>
-      
-      <!-- Stock Status Text -->
-      <span [class]="'text-xs ' + getTextClass()">
-        {{ getStatusText() }}
-      </span>
-    </div>
-  `
+  templateUrl: './stock-status.html'
 })
-export class StockStatusComponent {
+export class StockStatus {
   @Input() productId!: string;
   @Input() minStock?: number;
   

@@ -1,0 +1,103 @@
+<div class="h-full flex flex-col">
+  <!-- Header -->
+  <div class="p-6 border-b border-gray-200">
+    <h2 class="text-xl font-bold text-gray-800">Order History</h2>
+    <p class="text-gray-600 mt-1">View all completed orders</p>
+  </div>
+
+  <!-- Orders List -->
+  <div class="flex-1 overflow-y-auto p-6">
+    <div *ngIf="posService.allOrders().length === 0" class="text-center py-12">
+      <div class="text-6xl mb-4">📋</div>
+      <h3 class="text-lg font-semibold text-gray-600 mb-2">No orders yet</h3>
+      <p class="text-gray-500">
+        Complete some orders to see them in the history
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <div
+        *ngFor="let order of posService.allOrders(); trackBy: trackByOrderId"
+        class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200"
+      >
+        <!-- Order Header -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
+            >
+              <lucide-icon
+                [img]="dollarIcon"
+                class="w-5 h-5 text-blue-600"
+              ></lucide-icon>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800">Order #{{ order.id }}</h3>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <lucide-icon [img]="calendarIcon" class="w-4 h-4"></lucide-icon>
+                {{ order.timestamp | date : "medium" }}
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-bold text-green-600">
+              PKR {{ order.finalTotal | number : "1.2-2" }}
+            </div>
+            <div class="flex items-center gap-1 text-sm text-gray-500">
+              <lucide-icon [img]="creditCardIcon" class="w-4 h-4"></lucide-icon>
+              {{ getPaymentMethodName(order.paymentMethod) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Info -->
+        <div
+          *ngIf="order.customerName"
+          class="flex items-center gap-2 mb-4 text-sm text-gray-600"
+        >
+          <lucide-icon [img]="userIcon" class="w-4 h-4"></lucide-icon>
+          Customer: {{ order.customerName }}
+        </div>
+
+        <!-- Order Items -->
+        <div class="space-y-2">
+          <div
+            *ngFor="let item of order.items"
+            class="flex items-center justify-between py-2 border-t border-gray-100 first:border-t-0"
+          >
+            <div class="flex-1">
+              <span class="font-medium text-gray-800">{{
+                item.product.name
+              }}</span>
+              <span class="text-sm text-gray-500 ml-2"
+                >× {{ item.quantity }}</span
+              >
+            </div>
+            <div class="font-semibold text-gray-800">
+              PKR {{ item.subtotal | number : "1.2-2" }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <div class="flex justify-between text-sm text-gray-600 mb-1">
+            <span>Subtotal:</span>
+            <span>PKR {{ order.total | number : "1.2-2" }}</span>
+          </div>
+          <div class="flex justify-between text-sm text-gray-600 mb-1">
+            <span>Tax:</span>
+            <span>PKR {{ order.tax | number : "1.2-2" }}</span>
+          </div>
+          <div
+            *ngIf="order.discount > 0"
+            class="flex justify-between text-sm text-green-600 mb-1"
+          >
+            <span>Discount:</span>
+            <span>-PKR {{ order.discount | number : "1.2-2" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

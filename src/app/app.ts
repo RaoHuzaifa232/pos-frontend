@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { PosLayoutComponent } from './components/pos-layout/pos-layout.component';
+import { PosLayout } from './components/pos-layout/pos-layout';
 
 @Component({
   selector: 'app-root',
-  imports: [PosLayoutComponent],
-  template: '<app-pos-layout></app-pos-layout>',
-  styleUrl: './app.scss'
+  imports: [PosLayout],
+  template: '<app-pos-layout/>',
+  styleUrl: './app.scss',
 })
 export class App {
   protected title = 'pos-frontend';
