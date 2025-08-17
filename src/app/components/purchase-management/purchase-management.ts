@@ -92,7 +92,7 @@ export class PurchaseManagement {
       supplier: purchase.supplier,
       quantity: purchase.quantity,
       costPrice: purchase.costPrice,
-      purchaseDate: purchase.purchaseDate.toISOString().split('T')[0],
+      purchaseDate: new Date(purchase.purchaseDate).toISOString().split('T')[0],
       invoiceNumber: purchase.invoiceNumber || '',
       notes: purchase.notes || '',
     };
