@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import {
   Category,
   InventoryReport,
@@ -10,11 +10,15 @@ import {
   StockMovement,
   Supplier,
 } from '../models/product.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InventoryService {
+  private readonly _http = inject(HttpClient);
+  private readonly baseUrl = 'http://localhost:3000';
+
   private products = signal<Product[]>([]);
   private purchases = signal<Purchase[]>([]);
   private stockMovements = signal<StockMovement[]>([]);
@@ -53,32 +57,33 @@ export class InventoryService {
 
   private initializeData() {
     // Sample categories
-    const sampleCategories: Category[] = [
-      {
-        id: '1',
-        name: 'Beverages',
-        color: 'bg-blue-500',
-        description: 'Drinks and beverages',
-      },
-      {
-        id: '2',
-        name: 'Food',
-        color: 'bg-green-500',
-        description: 'Food items',
-      },
-      {
-        id: '3',
-        name: 'Snacks',
-        color: 'bg-yellow-500',
-        description: 'Snacks and chips',
-      },
-      {
-        id: '4',
-        name: 'Electronics',
-        color: 'bg-purple-500',
-        description: 'Electronic items',
-      },
-    ];
+    // const sampleCategories: Category[] = [
+    //   {
+    //     id: '1',
+    //     name: 'Beverages',
+    //     color: 'bg-blue-500',
+    //     description: 'Drinks and beverages',
+    //   },
+    //   {
+    //     id: '2',
+    //     name: 'Food',
+    //     color: 'bg-green-500',
+    //     description: 'Food items',
+    //   },
+    //   {
+    //     id: '3',
+    //     name: 'Snacks',
+    //     color: 'bg-yellow-500',
+    //     description: 'Snacks and chips',
+    //   },
+    //   {
+    //     id: '4',
+    //     name: 'Electronics',
+    //     color: 'bg-purple-500',
+    //     description: 'Electronic items',
+    //   },
+    // ];
+    this.getAllCategories();
 
     // Sample suppliers
     const sampleSuppliers: Supplier[] = [
@@ -207,7 +212,7 @@ export class InventoryService {
       },
     ];
 
-    this.categories.set(sampleCategories);
+    // this.categories.set(sampleCategories);
     this.suppliers.set(sampleSuppliers);
     this.paymentMethods.set(samplePaymentMethods);
     this.products.set(sampleProducts);
@@ -414,24 +419,54 @@ export class InventoryService {
   }
 
   // Category Management
-  addCategory(category: Omit<Category, 'id'>): void {
-    const newCategory: Category = {
-      ...category,
-      id: Date.now().toString(),
-    };
-    this.categories.update((categories) => [...categories, newCategory]);
+  addCategory(category: Omit<Category, '_id'>): void {
+    this._http
+      .post<Category>(`${this.baseUrl}/categories`, category)
+      .subscribe({
+        next: (category: Category) => {
+          console.log(category);
+          this.categories.update((categories) => [...categories, category]);
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+  }
+
+  getAllCategories(): void {
+    this._http.get<Category[]>(`${this.baseUrl}/categories`).subscribe({
+      next: (categories: Category[]) => {
+        console.log(categories);
+        this.categories.set(categories);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 
   updateCategory(id: string, updates: Partial<Category>): void {
-    this.categories.update((categories) =>
-      categories.map((c) => (c.id === id ? { ...c, ...updates } : c))
-    );
+    this._http
+      .put<Category>(`${this.baseUrl}/categories/${id}`, updates)
+      .subscribe({
+        next: () => {
+          this.getAllCategories();
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
   }
 
   deleteCategory(id: string): void {
-    this.categories.update((categories) =>
-      categories.filter((c) => c.id !== id)
-    );
+    this._http.delete(`${this.baseUrl}/categories/${id}`).subscribe({
+      next: () => {
+        this.getAllCategories();
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 
   // Reports and Analytics

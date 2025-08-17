@@ -1,7 +1,15 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Plus, Search, Edit, Trash2, Tag, Package } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Tag,
+  Package,
+} from 'lucide-angular';
 import { InventoryService } from '../../services/inventory.service';
 import { Category } from '../../models/product.model';
 
@@ -9,7 +17,7 @@ import { Category } from '../../models/product.model';
   selector: 'app-category-management',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
-  templateUrl: './category-management.html'
+  templateUrl: './category-management.html',
 })
 export class CategoryManagement {
   readonly plusIcon = Plus;
@@ -26,7 +34,7 @@ export class CategoryManagement {
   categoryForm = {
     name: '',
     description: '',
-    color: 'bg-blue-500'
+    color: 'bg-blue-500',
   };
 
   colorOptions = [
@@ -41,7 +49,7 @@ export class CategoryManagement {
     { name: 'Teal', class: 'bg-teal-500' },
     { name: 'Cyan', class: 'bg-cyan-500' },
     { name: 'Emerald', class: 'bg-emerald-500' },
-    { name: 'Rose', class: 'bg-rose-500' }
+    { name: 'Rose', class: 'bg-rose-500' },
   ];
 
   constructor(public inventoryService: InventoryService) {}
@@ -51,9 +59,10 @@ export class CategoryManagement {
 
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      categories = categories.filter(c =>
-        c.name.toLowerCase().includes(query) ||
-        c.description?.toLowerCase().includes(query)
+      categories = categories.filter(
+        (c) =>
+          c.name.toLowerCase().includes(query) ||
+          c.description?.toLowerCase().includes(query)
       );
     }
 
@@ -69,13 +78,15 @@ export class CategoryManagement {
   }
 
   getTotalStock(categoryName: string): number {
-    return this.inventoryService.getProductsByCategory(categoryName)
+    return this.inventoryService
+      .getProductsByCategory(categoryName)
       .reduce((total, product) => total + product.stock, 0);
   }
 
   getStockValue(categoryName: string): number {
-    return this.inventoryService.getProductsByCategory(categoryName)
-      .reduce((total, product) => total + (product.stock * product.costPrice), 0);
+    return this.inventoryService
+      .getProductsByCategory(categoryName)
+      .reduce((total, product) => total + product.stock * product.costPrice, 0);
   }
 
   editCategory(category: Category) {
@@ -83,12 +94,12 @@ export class CategoryManagement {
     this.categoryForm = {
       name: category.name,
       description: category.description || '',
-      color: category.color
+      color: category.color,
     };
   }
 
   deleteCategory(id: string) {
-    const category = this.inventoryService.allCategories().find(c => c.id === id);
+    const category = this.inventoryService.allCategories().find(c => c._id === id);
     if (!category) return;
 
     const productCount = this.getProductCount(category.name);
@@ -105,17 +116,17 @@ export class CategoryManagement {
   saveCategory() {
     if (this.editingCategory()) {
       // Update existing category
-      this.inventoryService.updateCategory(this.editingCategory()!.id, {
+      this.inventoryService.updateCategory(this.editingCategory()!._id, {
         name: this.categoryForm.name,
         description: this.categoryForm.description,
-        color: this.categoryForm.color
+        color: this.categoryForm.color,
       });
     } else {
       // Add new category
       this.inventoryService.addCategory({
         name: this.categoryForm.name,
         description: this.categoryForm.description,
-        color: this.categoryForm.color
+        color: this.categoryForm.color,
       });
     }
 
@@ -128,11 +139,11 @@ export class CategoryManagement {
     this.categoryForm = {
       name: '',
       description: '',
-      color: 'bg-blue-500'
+      color: 'bg-blue-500',
     };
   }
 
   trackByCategoryId(index: number, category: Category): string {
-    return category.id;
+    return category._id;
   }
 }
