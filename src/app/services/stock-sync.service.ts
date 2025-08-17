@@ -44,7 +44,7 @@ export class StockSyncService {
       if (this.isLowStock(item.productId)) {
         const product = this.inventoryService
           .allProducts()
-          .find((p) => p.id === item.productId);
+          .find((p) => p._id === item.productId);
         if (product) {
           this.notificationService.showStockAlert(
             item.productName,
@@ -137,7 +137,7 @@ export class StockSyncService {
   ): { available: boolean; currentStock: number; message?: string } {
     const product = this.inventoryService
       .allProducts()
-      .find((p) => p.id === productId);
+      .find((p) => p._id === productId);
 
     if (!product) {
       return {
@@ -165,7 +165,7 @@ export class StockSyncService {
   getCurrentStock(productId: string): number {
     const product = this.inventoryService
       .allProducts()
-      .find((p) => p.id === productId);
+      .find((p) => p._id === productId);
     return product ? product.stock : 0;
   }
 
@@ -173,7 +173,7 @@ export class StockSyncService {
   isLowStock(productId: string): boolean {
     const product = this.inventoryService
       .allProducts()
-      .find((p) => p.id === productId);
+      .find((p) => p._id === productId);
     return product ? product.stock <= product.minStock : false;
   }
 
@@ -181,7 +181,7 @@ export class StockSyncService {
   isOutOfStock(productId: string): boolean {
     const product = this.inventoryService
       .allProducts()
-      .find((p) => p.id === productId);
+      .find((p) => p._id === productId);
     return product ? product.stock === 0 : true;
   }
 }

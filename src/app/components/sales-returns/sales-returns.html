@@ -305,7 +305,7 @@
           >
             <option value="">Select Product</option>
             @for(product of inventoryService.allProducts();track $index){
-            <option [value]="product.id">
+            <option [value]="product._id">
               {{ product.name }} ({{ product.category }})
             </option>
             }

@@ -11,43 +11,49 @@ import { Product } from '../../models/product.model';
   selector: 'app-product-grid',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule, StockStatus],
-  templateUrl:'./product-grid.html',
-  styles: [`
-    .line-clamp-2 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-  `]
+  templateUrl: './product-grid.html',
+  styles: [
+    `
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    `,
+  ],
 })
 export class ProductGrid {
   readonly searchIcon = Search;
   readonly plusIcon = Plus;
-  
+
   searchQuery = signal('');
   selectedCategory = signal('all');
 
-  constructor(public posService: PosService, public inventoryService: InventoryService) {}
+  constructor(
+    public posService: PosService,
+    public inventoryService: InventoryService
+  ) {}
 
   filteredProducts = computed(() => {
     let products = this.inventoryService.allProducts();
-    
+
     // Filter by category
     if (this.selectedCategory() !== 'all') {
-      products = products.filter(p => p.category === this.selectedCategory());
+      products = products.filter((p) => p.category === this.selectedCategory());
     }
-    
+
     // Filter by search query
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      products = products.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query) ||
-        p.barcode?.includes(query)
+      products = products.filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          p.barcode?.includes(query)
       );
     }
-    
+
     return products;
   });
 
@@ -64,6 +70,6 @@ export class ProductGrid {
   }
 
   trackByProductId(index: number, product: Product): string {
-    return product.id;
+    return product._id;
   }
 }

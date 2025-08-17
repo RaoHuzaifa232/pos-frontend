@@ -1,7 +1,15 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Plus, Search, Edit, Trash2, Package, AlertTriangle } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Package,
+  AlertTriangle,
+} from 'lucide-angular';
 import { InventoryService } from '../../services/inventory.service';
 import { Product } from '../../models/product.model';
 
@@ -9,7 +17,7 @@ import { Product } from '../../models/product.model';
   selector: 'app-product-management',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
-  templateUrl: './product-management.html'
+  templateUrl: './product-management.html',
 })
 export class ProductManagement {
   readonly plusIcon = Plus;
@@ -34,7 +42,7 @@ export class ProductManagement {
     sellingPrice: 0,
     stock: 0,
     minStock: 0,
-    description: ''
+    description: '',
   };
 
   constructor(public inventoryService: InventoryService) {}
@@ -45,25 +53,26 @@ export class ProductManagement {
     // Filter by search query
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      products = products.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query) ||
-        p.barcode?.includes(query) ||
-        p.supplier?.toLowerCase().includes(query)
+      products = products.filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          p.barcode?.includes(query) ||
+          p.supplier?.toLowerCase().includes(query)
       );
     }
 
     // Filter by category
     if (this.selectedCategory()) {
-      products = products.filter(p => p.category === this.selectedCategory());
+      products = products.filter((p) => p.category === this.selectedCategory());
     }
 
     // Filter by stock status
     const stockFilter = this.stockFilter();
     if (stockFilter === 'low') {
-      products = products.filter(p => p.stock <= p.minStock && p.stock > 0);
+      products = products.filter((p) => p.stock <= p.minStock && p.stock > 0);
     } else if (stockFilter === 'out') {
-      products = products.filter(p => p.stock === 0);
+      products = products.filter((p) => p.stock === 0);
     }
 
     return products;
@@ -98,7 +107,7 @@ export class ProductManagement {
       sellingPrice: product.sellingPrice,
       stock: product.stock,
       minStock: product.minStock,
-      description: product.description || ''
+      description: product.description || '',
     };
   }
 
@@ -111,7 +120,7 @@ export class ProductManagement {
   saveProduct() {
     if (this.editingProduct()) {
       // Update existing product
-      this.inventoryService.updateProduct(this.editingProduct()!.id, {
+      this.inventoryService.updateProduct(this.editingProduct()!._id, {
         name: this.productForm.name,
         barcode: this.productForm.barcode,
         category: this.productForm.category,
@@ -120,7 +129,7 @@ export class ProductManagement {
         sellingPrice: this.productForm.sellingPrice,
         stock: this.productForm.stock,
         minStock: this.productForm.minStock,
-        description: this.productForm.description
+        description: this.productForm.description,
       });
     } else {
       // Add new product
@@ -133,7 +142,7 @@ export class ProductManagement {
         sellingPrice: this.productForm.sellingPrice,
         stock: this.productForm.stock,
         minStock: this.productForm.minStock,
-        description: this.productForm.description
+        description: this.productForm.description,
       });
     }
 
@@ -152,11 +161,7 @@ export class ProductManagement {
       sellingPrice: 0,
       stock: 0,
       minStock: 0,
-      description: ''
+      description: '',
     };
-  }
-
-  trackByProductId(index: number, product: Product): string {
-    return product.id;
   }
 }

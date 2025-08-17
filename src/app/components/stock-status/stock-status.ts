@@ -27,14 +27,14 @@ export class StockStatus {
   currentStock = computed(() => {
     const product = this.inventoryService
       .allProducts()
-      .find((p) => p.id === this.productId);
+      .find((p) => p._id === this.productId);
     return product ? product.stock : 0;
   });
 
   isLowStock = computed(() => {
     const product = this.inventoryService
       .allProducts()
-      .find((p) => p.id === this.productId);
+      .find((p) => p._id === this.productId);
     return product
       ? product.stock <= product.minStock && product.stock > 0
       : false;
@@ -43,7 +43,7 @@ export class StockStatus {
   isOutOfStock = computed(() => {
     const product = this.inventoryService
       .allProducts()
-      .find((p) => p.id === this.productId);
+      .find((p) => p._id === this.productId);
     return product ? product.stock === 0 : true;
   });
 

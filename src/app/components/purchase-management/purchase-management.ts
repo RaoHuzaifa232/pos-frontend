@@ -1,7 +1,16 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Plus, Search, ShoppingCart, Calendar, DollarSign, Edit, Trash2 } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Plus,
+  Search,
+  ShoppingCart,
+  Calendar,
+  DollarSign,
+  Edit,
+  Trash2,
+} from 'lucide-angular';
 import { InventoryService } from '../../services/inventory.service';
 import { Purchase } from '../../models/product.model';
 
@@ -9,7 +18,7 @@ import { Purchase } from '../../models/product.model';
   selector: 'app-purchase-management',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
-  templateUrl: './purchase-management.html'
+  templateUrl: './purchase-management.html',
 })
 export class PurchaseManagement {
   readonly plusIcon = Plus;
@@ -33,7 +42,7 @@ export class PurchaseManagement {
     costPrice: 0,
     purchaseDate: new Date().toISOString().split('T')[0],
     invoiceNumber: '',
-    notes: ''
+    notes: '',
   };
 
   constructor(public inventoryService: InventoryService) {}
@@ -43,14 +52,18 @@ export class PurchaseManagement {
 
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      purchases = purchases.filter(p =>
-        p.productName.toLowerCase().includes(query) ||
-        p.supplier.toLowerCase().includes(query) ||
-        p.invoiceNumber?.toLowerCase().includes(query)
+      purchases = purchases.filter(
+        (p) =>
+          p.productName.toLowerCase().includes(query) ||
+          p.supplier.toLowerCase().includes(query) ||
+          p.invoiceNumber?.toLowerCase().includes(query)
       );
     }
 
-    return purchases.sort((a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime());
+    return purchases.sort(
+      (a, b) =>
+        new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime()
+    );
   });
 
   onSearchChange() {
@@ -58,7 +71,9 @@ export class PurchaseManagement {
   }
 
   onProductSelect() {
-    const product = this.inventoryService.allProducts().find(p => p.id === this.purchaseForm.productId);
+    const product = this.inventoryService
+      .allProducts()
+      .find((p) => p._id === this.purchaseForm.productId);
     if (product) {
       this.purchaseForm.productName = product.name;
       this.purchaseForm.costPrice = product.costPrice;
@@ -79,12 +94,16 @@ export class PurchaseManagement {
       costPrice: purchase.costPrice,
       purchaseDate: purchase.purchaseDate.toISOString().split('T')[0],
       invoiceNumber: purchase.invoiceNumber || '',
-      notes: purchase.notes || ''
+      notes: purchase.notes || '',
     };
   }
 
   deletePurchase(id: string) {
-    if (confirm('Are you sure you want to delete this purchase? This will also adjust the stock levels.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete this purchase? This will also adjust the stock levels.'
+      )
+    ) {
       this.inventoryService.deletePurchase(id);
     }
   }
@@ -101,7 +120,7 @@ export class PurchaseManagement {
         totalCost: this.purchaseForm.quantity * this.purchaseForm.costPrice,
         purchaseDate: new Date(this.purchaseForm.purchaseDate),
         invoiceNumber: this.purchaseForm.invoiceNumber || undefined,
-        notes: this.purchaseForm.notes || undefined
+        notes: this.purchaseForm.notes || undefined,
       };
 
       this.inventoryService.updatePurchase(this.editingPurchase()!.id, updates);
@@ -116,7 +135,7 @@ export class PurchaseManagement {
         totalCost: this.purchaseForm.quantity * this.purchaseForm.costPrice,
         purchaseDate: new Date(this.purchaseForm.purchaseDate),
         invoiceNumber: this.purchaseForm.invoiceNumber || undefined,
-        notes: this.purchaseForm.notes || undefined
+        notes: this.purchaseForm.notes || undefined,
       };
 
       this.inventoryService.addPurchase(purchase);
@@ -136,12 +155,14 @@ export class PurchaseManagement {
       costPrice: 0,
       purchaseDate: new Date().toISOString().split('T')[0],
       invoiceNumber: '',
-      notes: ''
+      notes: '',
     };
   }
 
   getTotalPurchaseAmount(): number {
-    return this.inventoryService.allPurchases().reduce((total, purchase) => total + purchase.totalCost, 0);
+    return this.inventoryService
+      .allPurchases()
+      .reduce((total, purchase) => total + purchase.totalCost, 0);
   }
 
   getThisMonthPurchases(): number {
@@ -149,10 +170,14 @@ export class PurchaseManagement {
     const thisMonth = now.getMonth();
     const thisYear = now.getFullYear();
 
-    return this.inventoryService.allPurchases()
-      .filter(purchase => {
+    return this.inventoryService
+      .allPurchases()
+      .filter((purchase) => {
         const purchaseDate = new Date(purchase.purchaseDate);
-        return purchaseDate.getMonth() === thisMonth && purchaseDate.getFullYear() === thisYear;
+        return (
+          purchaseDate.getMonth() === thisMonth &&
+          purchaseDate.getFullYear() === thisYear
+        );
       })
       .reduce((total, purchase) => total + purchase.totalCost, 0);
   }
@@ -160,7 +185,9 @@ export class PurchaseManagement {
   togglePurchaseSelection(purchaseId: string) {
     const currentSelected = this.selectedPurchases();
     if (currentSelected.includes(purchaseId)) {
-      this.selectedPurchases.set(currentSelected.filter(id => id !== purchaseId));
+      this.selectedPurchases.set(
+        currentSelected.filter((id) => id !== purchaseId)
+      );
     } else {
       this.selectedPurchases.set([...currentSelected, purchaseId]);
     }
@@ -169,7 +196,9 @@ export class PurchaseManagement {
   isAllSelected(): boolean {
     const filtered = this.filteredPurchases();
     const selected = this.selectedPurchases();
-    return filtered.length > 0 && filtered.every(p => selected.includes(p.id));
+    return (
+      filtered.length > 0 && filtered.every((p) => selected.includes(p.id))
+    );
   }
 
   toggleSelectAll() {
@@ -177,12 +206,14 @@ export class PurchaseManagement {
     if (this.isAllSelected()) {
       // Deselect all
       const currentSelected = this.selectedPurchases();
-      const filteredIds = filtered.map(p => p.id);
-      this.selectedPurchases.set(currentSelected.filter(id => !filteredIds.includes(id)));
+      const filteredIds = filtered.map((p) => p.id);
+      this.selectedPurchases.set(
+        currentSelected.filter((id) => !filteredIds.includes(id))
+      );
     } else {
       // Select all
       const currentSelected = this.selectedPurchases();
-      const filteredIds = filtered.map(p => p.id);
+      const filteredIds = filtered.map((p) => p.id);
       const newSelected = [...new Set([...currentSelected, ...filteredIds])];
       this.selectedPurchases.set(newSelected);
     }
@@ -190,8 +221,12 @@ export class PurchaseManagement {
 
   bulkDeletePurchases() {
     const selectedCount = this.selectedPurchases().length;
-    if (confirm(`Are you sure you want to delete ${selectedCount} purchase(s)? This will also adjust the stock levels accordingly.`)) {
-      this.selectedPurchases().forEach(id => {
+    if (
+      confirm(
+        `Are you sure you want to delete ${selectedCount} purchase(s)? This will also adjust the stock levels accordingly.`
+      )
+    ) {
+      this.selectedPurchases().forEach((id) => {
         this.inventoryService.deletePurchase(id);
       });
       this.selectedPurchases.set([]);

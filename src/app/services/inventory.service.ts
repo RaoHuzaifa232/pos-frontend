@@ -56,34 +56,8 @@ export class InventoryService {
   }
 
   private initializeData() {
-    // Sample categories
-    // const sampleCategories: Category[] = [
-    //   {
-    //     id: '1',
-    //     name: 'Beverages',
-    //     color: 'bg-blue-500',
-    //     description: 'Drinks and beverages',
-    //   },
-    //   {
-    //     id: '2',
-    //     name: 'Food',
-    //     color: 'bg-green-500',
-    //     description: 'Food items',
-    //   },
-    //   {
-    //     id: '3',
-    //     name: 'Snacks',
-    //     color: 'bg-yellow-500',
-    //     description: 'Snacks and chips',
-    //   },
-    //   {
-    //     id: '4',
-    //     name: 'Electronics',
-    //     color: 'bg-purple-500',
-    //     description: 'Electronic items',
-    //   },
-    // ];
     this.getAllCategories();
+    this.getAllProducts();
 
     // Sample suppliers
     const sampleSuppliers: Supplier[] = [
@@ -124,132 +98,67 @@ export class InventoryService {
       { id: '4', name: 'Digital Wallet', type: 'digital', isActive: true },
     ];
 
-    // Sample products with cost and selling prices
-    const sampleProducts: Product[] = [
-      {
-        id: '1',
-        name: 'Coffee',
-        sellingPrice: 4.99,
-        costPrice: 2.5,
-        category: 'Beverages',
-        stock: 50,
-        minStock: 10,
-        barcode: '123456789',
-        supplier: 'ABC Distributors',
-        description: 'Premium coffee blend',
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-      },
-      {
-        id: '2',
-        name: 'Sandwich',
-        sellingPrice: 8.99,
-        costPrice: 4.5,
-        category: 'Food',
-        stock: 25,
-        minStock: 5,
-        barcode: '987654321',
-        supplier: 'ABC Distributors',
-        description: 'Fresh sandwich',
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-      },
-      {
-        id: '3',
-        name: 'Chips',
-        sellingPrice: 2.99,
-        costPrice: 1.2,
-        category: 'Snacks',
-        stock: 100,
-        minStock: 20,
-        barcode: '456789123',
-        supplier: 'XYZ Wholesale',
-        description: 'Crispy potato chips',
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-      },
-      {
-        id: '4',
-        name: 'Soda',
-        sellingPrice: 1.99,
-        costPrice: 0.8,
-        category: 'Beverages',
-        stock: 75,
-        minStock: 15,
-        barcode: '789123456',
-        supplier: 'ABC Distributors',
-        description: 'Refreshing soda',
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-      },
-      {
-        id: '5',
-        name: 'Burger',
-        sellingPrice: 12.99,
-        costPrice: 6.5,
-        category: 'Food',
-        stock: 20,
-        minStock: 5,
-        barcode: '321654987',
-        supplier: 'ABC Distributors',
-        description: 'Delicious burger',
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-      },
-      {
-        id: '6',
-        name: 'Headphones',
-        sellingPrice: 29.99,
-        costPrice: 15.0,
-        category: 'Electronics',
-        stock: 15,
-        minStock: 3,
-        barcode: '654987321',
-        supplier: 'Tech Supply Co',
-        description: 'Wireless headphones',
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-      },
-    ];
-
-    // this.categories.set(sampleCategories);
     this.suppliers.set(sampleSuppliers);
     this.paymentMethods.set(samplePaymentMethods);
-    this.products.set(sampleProducts);
   }
 
   // Product Management
   addProduct(
-    product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>
-  ): Product {
-    const newProduct: Product = {
-      ...product,
-      id: Date.now().toString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    newProduct: Omit<Product, '_id' | 'createdAt' | 'updatedAt'>
+  ): void {
+    console.log('Product Add', newProduct);
+    this._http.post<Product>(`${this.baseUrl}/products`, newProduct).subscribe({
+      next: (product: Product) => {
+        console.log(product);
+        this.products.update((products) => [...products, product]);
+        this.addStockMovement(
+          product._id,
+          product.name,
+          'in',
+          product.stock,
+          'Initial stock'
+        );
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
 
-    this.products.update((products) => [...products, newProduct]);
-    this.addStockMovement(
-      newProduct.id,
-      newProduct.name,
-      'in',
-      product.stock,
-      'Initial stock'
-    );
-    return newProduct;
+  getAllProducts(): void {
+    this._http.get<Product[]>(`${this.baseUrl}/products`).subscribe({
+      next: (products: Product[]) => {
+        console.log(products);
+        this.products.set(products);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 
   updateProduct(id: string, updates: Partial<Product>): void {
-    this.products.update((products) =>
-      products.map((p) =>
-        p.id === id ? { ...p, ...updates, updatedAt: new Date() } : p
-      )
-    );
+    this._http
+      .put<Product>(`${this.baseUrl}/products/${id}`, updates)
+      .subscribe({
+        next: () => {
+          this.getAllProducts();
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
   }
 
   deleteProduct(id: string): void {
-    this.products.update((products) => products.filter((p) => p.id !== id));
+    this._http.delete(`${this.baseUrl}/products/${id}`).subscribe({
+      next: () => {
+        this.getAllProducts();
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 
   // Purchase Management
@@ -345,7 +254,7 @@ export class InventoryService {
   ): void {
     this.products.update((products) =>
       products.map((p) => {
-        if (p.id === productId) {
+        if (p._id === productId) {
           const newStock =
             type === 'in' ? p.stock + quantity : p.stock - quantity;
           return { ...p, stock: Math.max(0, newStock), updatedAt: new Date() };
@@ -356,13 +265,13 @@ export class InventoryService {
   }
 
   adjustStock(productId: string, newStock: number, reason: string): void {
-    const product = this.products().find((p) => p.id === productId);
+    const product = this.products().find((p) => p._id === productId);
     if (!product) return;
 
     const difference = newStock - product.stock;
     this.products.update((products) =>
       products.map((p) =>
-        p.id === productId
+        p._id === productId
           ? { ...p, stock: newStock, updatedAt: new Date() }
           : p
       )

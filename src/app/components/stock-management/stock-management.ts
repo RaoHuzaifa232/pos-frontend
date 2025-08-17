@@ -94,7 +94,7 @@ export class StockManagement {
         : this.adjustmentForm.reason;
 
     this.inventoryService.adjustStock(
-      product.id,
+      product._id,
       this.adjustmentForm.newStock,
       reason
     );

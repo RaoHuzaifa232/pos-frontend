@@ -90,7 +90,7 @@ export class SalesReturns {
   onProductSelect() {
     const product = this.inventoryService
       .allProducts()
-      .find((p) => p.id === this.returnForm.productId);
+      .find((p) => p._id === this.returnForm.productId);
     if (product) {
       this.returnForm.productName = product.name;
       this.returnForm.unitPrice = product.sellingPrice;

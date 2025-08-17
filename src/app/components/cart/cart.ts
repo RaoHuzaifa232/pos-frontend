@@ -52,6 +52,6 @@ export class Cart {
   }
 
   trackByItemId(index: number, item: CartItem): string {
-    return item.product.id;
+    return item.product._id;
   }
 }

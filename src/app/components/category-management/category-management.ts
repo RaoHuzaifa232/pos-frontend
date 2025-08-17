@@ -50,6 +50,15 @@ export class CategoryManagement {
     { name: 'Cyan', class: 'bg-cyan-500' },
     { name: 'Emerald', class: 'bg-emerald-500' },
     { name: 'Rose', class: 'bg-rose-500' },
+    { name: 'Amber', class: 'bg-amber-500' },
+    { name: 'Lime', class: 'bg-lime-500' },
+    { name: 'Fuchsia', class: 'bg-fuchsia-500' },
+    { name: 'Violet', class: 'bg-violet-500' },
+    { name: 'Sky', class: 'bg-sky-500' },
+    { name: 'Slate', class: 'bg-slate-500' },
+    { name: 'Zinc', class: 'bg-zinc-500' },
+    { name: 'Neutral', class: 'bg-neutral-500' },
+    { name: 'Stone', class: 'bg-stone-500' },
   ];
 
   constructor(public inventoryService: InventoryService) {}
@@ -99,16 +108,24 @@ export class CategoryManagement {
   }
 
   deleteCategory(id: string) {
-    const category = this.inventoryService.allCategories().find(c => c._id === id);
+    const category = this.inventoryService
+      .allCategories()
+      .find((c) => c._id === id);
     if (!category) return;
 
     const productCount = this.getProductCount(category.name);
     if (productCount > 0) {
-      alert(`Cannot delete category "${category.name}" because it contains ${productCount} product(s). Please move or delete the products first.`);
+      alert(
+        `Cannot delete category "${category.name}" because it contains ${productCount} product(s). Please move or delete the products first.`
+      );
       return;
     }
 
-    if (confirm(`Are you sure you want to delete the category "${category.name}"?`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete the category "${category.name}"?`
+      )
+    ) {
       this.inventoryService.deleteCategory(id);
     }
   }

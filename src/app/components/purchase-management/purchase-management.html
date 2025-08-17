@@ -310,7 +310,7 @@
             <option value="">Select Product</option>
             <option
               *ngFor="let product of inventoryService.allProducts()"
-              [value]="product.id"
+              [value]="product._id"
             >
               {{ product.name }} ({{ product.category }})
             </option>

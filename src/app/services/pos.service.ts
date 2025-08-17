@@ -34,14 +34,14 @@ export class PosService {
     // Get current product from inventory to ensure we have latest stock
     const currentProduct = this.inventoryService
       .allProducts()
-      .find((p) => p.id === product.id);
+      .find((p) => p._id === product._id);
     if (!currentProduct) {
       throw new Error('Product not found');
     }
 
     // Validate stock availability
     const existingItem = this.cart().find(
-      (item) => item.product.id === product.id
+      (item) => item.product._id === product._id
     );
     const currentQuantityInCart = existingItem ? existingItem.quantity : 0;
     const totalRequiredQuantity = currentQuantityInCart + quantity;
@@ -75,14 +75,14 @@ export class PosService {
   removeFromCart(productId: string) {
     const currentCart = this.cart();
     const updatedCart = currentCart.filter(
-      (item) => item.product.id !== productId
+      (item) => item.product._id !== productId
     );
     this.cart.set(updatedCart);
   }
 
   updateQuantity(productId: string, quantity: number) {
     const currentCart = this.cart();
-    const item = currentCart.find((item) => item.product.id === productId);
+    const item = currentCart.find((item) => item.product._id === productId);
 
     if (item) {
       if (quantity <= 0) {
@@ -91,7 +91,7 @@ export class PosService {
         // Get current product from inventory to validate stock
         const currentProduct = this.inventoryService
           .allProducts()
-          .find((p) => p.id === productId);
+          .find((p) => p._id === productId);
         if (!currentProduct) {
           throw new Error('Product not found');
         }
@@ -151,12 +151,12 @@ export class PosService {
       const currentStock = item.product.stock;
 
       this.inventoryService.updateProductStock(
-        item.product.id,
+        item.product._id,
         item.quantity,
         'out'
       );
       this.inventoryService.addStockMovement(
-        item.product.id,
+        item.product._id,
         item.product.name,
         'out',
         item.quantity,
@@ -176,7 +176,7 @@ export class PosService {
       // Check for low stock after sale
       const updatedProduct = this.inventoryService
         .allProducts()
-        .find((p) => p.id === item.product.id);
+        .find((p) => p._id === item.product._id);
       if (updatedProduct && updatedProduct.stock <= updatedProduct.minStock) {
         this.notificationService.showStockAlert(
           item.product.name,
