@@ -58,6 +58,7 @@ export class InventoryService {
   private initializeData() {
     this.getAllCategories();
     this.getAllProducts();
+    this.getAllPurchases();
 
     // Sample suppliers
     const sampleSuppliers: Supplier[] = [
@@ -162,31 +163,44 @@ export class InventoryService {
   }
 
   // Purchase Management
-  addPurchase(purchase: Omit<Purchase, 'id'>): void {
-    const newPurchase: Purchase = {
-      ...purchase,
-      id: Date.now().toString(),
-    };
+  addPurchase(purchase: Omit<Purchase, '_id'>): void {
+    this._http.post<Purchase>(`${this.baseUrl}/purchases`, purchase).subscribe({
+      next: (purchase: Purchase) => {
+        console.log(purchase);
+        this.purchases.update((purchases) => [...purchases, purchase]);
+        // Update product stock
+        this.updateProductStock(purchase.productId, purchase.quantity, 'in');
+        // Add stock movement
+        this.addStockMovement(
+          purchase.productId,
+          purchase.productName,
+          'in',
+          purchase.quantity,
+          `Purchase from ${purchase.supplier}`,
+          purchase._id
+        );
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
 
-    this.purchases.update((purchases) => [...purchases, newPurchase]);
-
-    // Update product stock
-    this.updateProductStock(purchase.productId, purchase.quantity, 'in');
-
-    // Add stock movement
-    this.addStockMovement(
-      purchase.productId,
-      purchase.productName,
-      'in',
-      purchase.quantity,
-      `Purchase from ${purchase.supplier}`,
-      newPurchase.id
-    );
+  getAllPurchases(): void {
+    this._http.get<Purchase[]>(`${this.baseUrl}/purchases`).subscribe({
+      next: (purchases: Purchase[]) => {
+        console.log(purchases);
+        this.purchases.set(purchases);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
   }
 
   updatePurchase(id: string, updates: Partial<Purchase>): void {
     const currentPurchases = this.purchases();
-    const existingPurchase = currentPurchases.find((p) => p.id === id);
+    const existingPurchase = currentPurchases.find((p) => p._id === id);
 
     if (!existingPurchase) return;
 
@@ -195,55 +209,65 @@ export class InventoryService {
       updates.quantity !== undefined &&
       updates.quantity !== existingPurchase.quantity
     ) {
-      const quantityDifference = updates.quantity - existingPurchase.quantity;
-      this.updateProductStock(
-        existingPurchase.productId,
-        Math.abs(quantityDifference),
-        quantityDifference > 0 ? 'in' : 'out'
-      );
-
-      // Add stock movement for the adjustment
-      this.addStockMovement(
-        existingPurchase.productId,
-        existingPurchase.productName,
-        quantityDifference > 0 ? 'in' : 'out',
-        Math.abs(quantityDifference),
-        `Purchase adjustment - ${existingPurchase.supplier}`,
-        id
-      );
+      this._http
+        .put<Purchase>(`${this.baseUrl}/purchases/${id}`, updates)
+        .subscribe({
+          next: () => {
+            this.getAllPurchases();
+            if (updates.quantity) {
+              const quantityDifference =
+                updates.quantity - existingPurchase.quantity;
+              this.updateProductStock(
+                existingPurchase.productId,
+                Math.abs(quantityDifference),
+                quantityDifference > 0 ? 'in' : 'out'
+              );
+              // Add stock movement for the adjustment
+              this.addStockMovement(
+                existingPurchase.productId,
+                existingPurchase.productName,
+                quantityDifference > 0 ? 'in' : 'out',
+                Math.abs(quantityDifference),
+                `Purchase adjustment - ${existingPurchase.supplier}`,
+                id
+              );
+            }
+          },
+          error: (error) => {
+            console.log(error);
+          },
+        });
     }
-
-    // Update the purchase
-    this.purchases.update((purchases) =>
-      purchases.map((p) => (p.id === id ? { ...p, ...updates } : p))
-    );
   }
 
   deletePurchase(id: string): void {
     const currentPurchases = this.purchases();
-    const purchaseToDelete = currentPurchases.find((p) => p.id === id);
+    const purchaseToDelete = currentPurchases.find((p) => p._id === id);
 
     if (!purchaseToDelete) return;
+    this._http.delete(`${this.baseUrl}/purchases/${id}`).subscribe({
+      next: () => {
+        // Reverse the stock increase from this purchase
+        this.updateProductStock(
+          purchaseToDelete.productId,
+          purchaseToDelete.quantity,
+          'out'
+        );
 
-    // Reverse the stock increase from this purchase
-    this.updateProductStock(
-      purchaseToDelete.productId,
-      purchaseToDelete.quantity,
-      'out'
-    );
+        // Add stock movement for the reversal
+        this.addStockMovement(
+          purchaseToDelete.productId,
+          purchaseToDelete.productName,
+          'out',
+          purchaseToDelete.quantity,
+          `Purchase deleted - ${purchaseToDelete.supplier}`,
+          id
+        );
 
-    // Add stock movement for the reversal
-    this.addStockMovement(
-      purchaseToDelete.productId,
-      purchaseToDelete.productName,
-      'out',
-      purchaseToDelete.quantity,
-      `Purchase deleted - ${purchaseToDelete.supplier}`,
-      id
-    );
-
-    // Remove the purchase
-    this.purchases.update((purchases) => purchases.filter((p) => p.id !== id));
+        this.getAllPurchases();
+      },
+      error: (error) => console.log(error),
+    });
   }
 
   // Stock Management

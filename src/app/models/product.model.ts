@@ -41,7 +41,7 @@ export interface Category {
 }
 
 export interface Purchase {
-  id: string;
+  _id: string;
   productId: string;
   productName: string;
   quantity: number;

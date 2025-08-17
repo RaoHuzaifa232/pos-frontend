@@ -123,10 +123,13 @@ export class PurchaseManagement {
         notes: this.purchaseForm.notes || undefined,
       };
 
-      this.inventoryService.updatePurchase(this.editingPurchase()!.id, updates);
+      this.inventoryService.updatePurchase(
+        this.editingPurchase()!._id,
+        updates
+      );
     } else {
       // Add new purchase
-      const purchase: Omit<Purchase, 'id'> = {
+      const purchase: Omit<Purchase, '_id'> = {
         productId: this.purchaseForm.productId,
         productName: this.purchaseForm.productName,
         supplier: this.purchaseForm.supplier,
@@ -197,7 +200,7 @@ export class PurchaseManagement {
     const filtered = this.filteredPurchases();
     const selected = this.selectedPurchases();
     return (
-      filtered.length > 0 && filtered.every((p) => selected.includes(p.id))
+      filtered.length > 0 && filtered.every((p) => selected.includes(p._id))
     );
   }
 
@@ -206,14 +209,14 @@ export class PurchaseManagement {
     if (this.isAllSelected()) {
       // Deselect all
       const currentSelected = this.selectedPurchases();
-      const filteredIds = filtered.map((p) => p.id);
+      const filteredIds = filtered.map((p) => p._id);
       this.selectedPurchases.set(
         currentSelected.filter((id) => !filteredIds.includes(id))
       );
     } else {
       // Select all
       const currentSelected = this.selectedPurchases();
-      const filteredIds = filtered.map((p) => p.id);
+      const filteredIds = filtered.map((p) => p._id);
       const newSelected = [...new Set([...currentSelected, ...filteredIds])];
       this.selectedPurchases.set(newSelected);
     }
@@ -231,9 +234,5 @@ export class PurchaseManagement {
       });
       this.selectedPurchases.set([]);
     }
-  }
-
-  trackByPurchaseId(index: number, purchase: Purchase): string {
-    return purchase.id;
   }
 }
